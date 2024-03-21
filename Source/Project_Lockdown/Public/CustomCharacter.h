@@ -11,9 +11,20 @@ class PROJECT_LOCKDOWN_API ACustomCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
+protected:
+	//set Custom Movement Component as the movement component
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Movement) class UCustomCharacterMovementComponent* CustomCharacterMovementComponent;
+
 public:
 	// Sets default values for this character's properties
 	ACustomCharacter();
+
+	bool bPressedCustomJump;
+
+	virtual void Jump() override;
+	virtual void StopJumping() override;
+
+	FCollisionQueryParams GetIgnoreCharacterParams() const;
 
 protected:
 	// Called when the game starts or when spawned
