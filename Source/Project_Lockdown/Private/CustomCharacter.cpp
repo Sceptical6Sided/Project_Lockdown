@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "CustomCharacterMovementComponent.h"
 #include "CustomCharacter.h"
+#include "CustomCharacterMovementComponent.h"
 
 // Sets default values
 ACustomCharacter::ACustomCharacter()
