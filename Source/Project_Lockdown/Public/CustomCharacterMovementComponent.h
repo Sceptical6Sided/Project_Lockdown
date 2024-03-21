@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CustomCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "CustomCharacterMovementComponent.generated.h"
 
