@@ -9,6 +9,17 @@
 /**
  * 
  */
+
+UENUM()
+enum ECustomMovementMode
+{
+	CMOVE_None UMETA(Hidden),
+	CMOVE_Slide UMETA(DisplayName="Slide"),
+	CMOVE_Prone UMETA(DisplayName="Prone"),
+	CMOVE_MAX UMETA(Hidden),
+};
+
+
 UCLASS()
 class PROJECT_LOCKDOWN_API UCustomCharacterMovementComponent : public UCharacterMovementComponent
 {
