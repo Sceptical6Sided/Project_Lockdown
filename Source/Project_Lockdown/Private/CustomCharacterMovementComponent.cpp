@@ -89,3 +89,14 @@ void UCustomCharacterMovementComponent::FSavedMove_Custom::PrepMoveFor(ACharacte
 }
 
 #pragma endregion
+
+#pragma region Client Network Prediction Data
+UCustomCharacterMovementComponent::FNetworkPredictionData_Client_Custom::FNetworkPredictionData_Client_Custom(const UCharacterMovementComponent& ClientMovement) : Super(ClientMovement)
+{ }
+
+FSavedMovePtr UCustomCharacterMovementComponent::FNetworkPredictionData_Client_Custom::AllocateNewMove()
+{
+	return FSavedMovePtr(new FSavedMove_Custom());
+}
+
+#pragma endregion

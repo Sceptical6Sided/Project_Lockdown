@@ -49,5 +49,75 @@ class PROJECT_LOCKDOWN_API UCustomCharacterMovementComponent : public UCharacter
 		virtual void SetMoveFor(ACharacter* C, float InDeltaTime, FVector const& NewAccel, FNetworkPredictionData_Client_Character& ClientData) override;
 		virtual void PrepMoveFor(ACharacter* C) override;
 	};
-	
+
+	class FNetworkPredictionData_Client_Custom : public FNetworkPredictionData_Client_Character
+	{
+	public:
+		FNetworkPredictionData_Client_Custom(const UCharacterMovementComponent& ClientMovement);
+
+		typedef FNetworkPredictionData_Client_Character Super;
+
+		virtual FSavedMovePtr AllocateNewMove() override;
+	};
+
+	//Parameters
+
+	//Stamina (Temporary until moved into its own component)
+public:
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Stamina") float Stamina = 100.f;
+private:
+	UPROPERTY(EditDefaultsOnly) float StaminaDecay = 0.5f;
+	UPROPERTY(EditDefaultsOnly) float StaminaRegen = 0.5f;
+	UPROPERTY(EditDefaultsOnly) float StaminaRegen_Rate = 0.25f;
+	UPROPERTY(EditDefaultsOnly) float StaminaRegen_Delay = 1.f;
+
+	//Sprint
+	UPROPERTY(EditDefaultsOnly) float Sprint_MaxSpeed = 1200.f;
+	UPROPERTY(EditDefaultsOnly) float Walk_MaxSpeed = 600.f;
+
+	//Slide
+	UPROPERTY(EditDefaultsOnly) float Slide_MinSpeed=500.f;
+	UPROPERTY(EditDefaultsOnly) float Slide_MaxSpeed=500.f;
+	UPROPERTY(EditDefaultsOnly) float Slide_EnterImpulse=300.f;
+	UPROPERTY(EditDefaultsOnly) float Slide_GravityForce=100.f;
+	UPROPERTY(EditDefaultsOnly) float Slide_FrictionFactor=0.5f;
+	UPROPERTY(EditDefaultsOnly) float Slide_BrakingDeceleration=1000.f;
+
+	//Prone
+	UPROPERTY(EditDefaultsOnly) float Prone_EnterHoldDuration = .2f;
+	UPROPERTY(EditDefaultsOnly) float Prone_SlideEnterImpulse = 300.f;
+	UPROPERTY(EditDefaultsOnly) float Prone_MaxSpeed = 300.f;
+	UPROPERTY(EditDefaultsOnly) float Prone_BrakingDeceleration = 2500.f;
+
+	//Mantle
+	UPROPERTY(EditDefaultsOnly) float Mantle_MaxDistance = 200.f;
+	UPROPERTY(EditDefaultsOnly) float Mantle_ReachHeight = 50.f;
+	UPROPERTY(EditDefaultsOnly) float Mantle_MinDepth = 30.f;
+	UPROPERTY(EditDefaultsOnly) float Mantle_MinWallSteepnessAngle = 75.f;
+	UPROPERTY(EditDefaultsOnly) float Mantle_MaxSurfaceAngle = 40.f;
+	UPROPERTY(EditDefaultsOnly) float Mantle_MaxAlignmentAngle = 45.f;
+	UPROPERTY(EditDefaultsOnly) UAnimMontage* TallMantleMontage;
+	UPROPERTY(EditDefaultsOnly) UAnimMontage* TransitionTallMantleMontage;
+	UPROPERTY(EditDefaultsOnly) UAnimMontage* ProxyTallMantleMontage;
+	UPROPERTY(EditDefaultsOnly) UAnimMontage* ShortMantleMontage;
+	UPROPERTY(EditDefaultsOnly) UAnimMontage* TransitionShortMantleMontage;
+	UPROPERTY(EditDefaultsOnly) UAnimMontage* ProxyShortMantleMontage;
+
+	//Transient
+	UPROPERTY(Transient) ACustomCharacter* CustomCharacterOwner;
+
+	//Flags
+	bool Safe_bWantsToSprint;
+	bool Safe_bWantsToProne;
+
+	bool Safe_bPrevWantsToCrouch;
+	bool Safe_bHadAnimRootMotion;
+	FTimerHandle TimerHandle_EnterProne;
+	FTimerHandle TimerHandle_StaminaRegen;
+
+	bool Safe_bTransitionFinished;
+	TSharedPtr<FRootMotionSource_MoveToForce> TransitionRMS;
+	UPROPERTY(Transient) UAnimMontage* TransitionQueuedMontage;
+	float TransitionQueuedMontageSpeed;
+	int TransitionRMS_ID;
 };
