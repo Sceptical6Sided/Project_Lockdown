@@ -17,7 +17,7 @@ protected:
 
 public:
 	// Sets default values for this character's properties
-	ACustomCharacter();
+	ACustomCharacter(const FObjectInitializer& ObjectInitializer);
 
 	bool bPressedCustomJump;
 
