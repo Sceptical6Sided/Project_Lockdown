@@ -121,4 +121,77 @@ private:
 	UPROPERTY(Transient) UAnimMontage* TransitionQueuedMontage;
 	float TransitionQueuedMontageSpeed;
 	int TransitionRMS_ID;
+	
+	//Replication
+	UPROPERTY(ReplicatedUsing=OnRep_ShortMantle) bool Proxy_bShortMantle;
+	UPROPERTY(ReplicatedUsing=OnRep_TallMantle) bool Proxy_bTallMantle;
+	
+public:
+	UCustomCharacterMovementComponent();
+
+	virtual FNetworkPredictionData_Client* GetPredictionData_Client() const override;
+
+	UFUNCTION(BlueprintCallable) void SprintPressed();
+	UFUNCTION(BlueprintCallable) void SprintReleased();
+	
+	UFUNCTION(BlueprintCallable) void CrouchPressed();
+	UFUNCTION(BlueprintCallable) void CrouchReleased();
+
+	UFUNCTION(BlueprintPure) bool IsCustomMovementMode(ECustomMovementMode InCustomMovementMode) const;
+	UFUNCTION(BlueprintPure) bool IsMovementMode(EMovementMode InMovementMode) const;
+	bool CanSlide() const;
+
+public:
+	virtual bool IsMovingOnGround() const override;
+	virtual bool CanCrouchInCurrentState() const override;
+	virtual float GetMaxSpeed() const override;
+	virtual float GetMaxBrakingDeceleration() const override;
+	
+protected:
+	virtual void InitializeComponent() override;
+	
+	virtual void UpdateFromCompressedFlags(uint8 Flags) override;
+	virtual void OnMovementUpdated(float DeltaSeconds, const FVector& OldLocation, const FVector& OldVelocity) override;
+	virtual void OnMovementModeChanged(EMovementMode PreviousMovementMode, uint8 PreviousCustomMode) override;
+	
+	virtual void UpdateCharacterStateBeforeMovement(float DeltaSeconds) override;
+	virtual void UpdateCharacterStateAfterMovement(float DeltaSeconds) override;
+
+	virtual void PhysCustom(float deltaTime, int32 Iterations) override;
+
+	//Slide
+private:
+	void EnterSlide(EMovementMode PrevMode, ECustomMovementMode PrevCustomMode);
+	void ExitSlide();
+	void PhysSlide(float deltaTime, int32 Iterations);
+	bool GetSliderSurface(FHitResult& Hit) const;
+
+	//Prone
+private:
+	void TryEnterProne() { Safe_bWantsToProne = true; }
+	void RegenStamina() {Stamina = Stamina + StaminaRegen;}
+	UFUNCTION(Server, Reliable) void Server_EnterProne();
+	
+	void EnterProne(EMovementMode PrevMode, ECustomMovementMode PrevCustomMode);
+	void ExitProne();
+	bool CanProne() const;
+	void PhysProne(float deltaTime, int32 Iterations);
+
+	//Mantle
+private:
+	bool TryMantle();
+	FVector GetMantleStartLocation(FHitResult FrontHit, FHitResult SurfaceHit, bool bTallMantle) const;
+
+	//Helpers
+private:
+	bool IsServer() const;
+	float CapRadius() const;
+	float CapHalfHeight() const;
+
+	//Proxy Replication
+public:
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+private:
+	UFUNCTION() void OnRep_ShortMantle();
+	UFUNCTION() void OnRep_TallMantle();
 };
