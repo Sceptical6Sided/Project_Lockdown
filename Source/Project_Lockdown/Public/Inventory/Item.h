@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract, BlueprintType, Blueprintable, EditInlineNew, DefaultToInstanced)
 class PROJECT_LOCKDOWN_API UItem : public UObject
 {
 	GENERATED_BODY()
