@@ -875,6 +875,11 @@ float UCustomCharacterMovementComponent::CapHalfHeight() const
 	return CharacterOwner->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
 }
 
+bool UCustomCharacterMovementComponent::IsSprinting() const
+{
+	return IsMovementMode(MOVE_Walking) && Safe_bWantsToSprint;
+}
+
 #pragma endregion
 
 UCustomCharacterMovementComponent::UCustomCharacterMovementComponent()
