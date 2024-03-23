@@ -15,7 +15,7 @@ class PROJECT_LOCKDOWN_API UItem : public UObject
 	
 public:
 
-	//UItem();
+	UItem();
 
 	//Used for tooltip
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Item") FText UseActionText;

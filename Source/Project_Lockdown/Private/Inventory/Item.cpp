@@ -3,3 +3,6 @@
 
 #include "Inventory/Item.h"
 
+UItem::UItem()
+{
+}
