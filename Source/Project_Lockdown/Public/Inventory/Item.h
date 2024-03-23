@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CustomCharacter.h"
 #include "Item.generated.h"
 
 /**
@@ -37,5 +38,10 @@ public:
 
 	//Inventory that owns the item
 	UPROPERTY()
-	class UInventoryComponent* OwningInventory; 
+	class UInventoryComponent* OwningInventory;
+
+	virtual void Use(class ACustomCharacter* Character) PURE_VIRTUAL(UItem,);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnUse(ACustomCharacter* Character);
 };
