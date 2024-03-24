@@ -2,6 +2,8 @@
 
 #include "CustomCharacter.h"
 #include "CustomCharacterMovementComponent.h"
+#include "Inventory/InventoryComponent.h"
+#include "Inventory/Item.h"
 
 // Sets default values
 ACustomCharacter::ACustomCharacter(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass<UCustomCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
@@ -10,6 +12,18 @@ ACustomCharacter::ACustomCharacter(const FObjectInitializer& ObjectInitializer) 
 	PrimaryActorTick.bCanEverTick = true;
 
 	CustomCharacterMovementComponent = Cast<UCustomCharacterMovementComponent>(GetCharacterMovement());
+
+	Inventory = CreateDefaultSubobject<UInventoryComponent>("Inventory");
+	Inventory->Capacity = 20;
+}
+
+void ACustomCharacter::UseItem(UItem* Item)
+{
+	if (Item)
+	{
+		Item->Use(this);
+		Item->OnUse(this); //Bp event
+	}
 }
 
 void ACustomCharacter::Jump()

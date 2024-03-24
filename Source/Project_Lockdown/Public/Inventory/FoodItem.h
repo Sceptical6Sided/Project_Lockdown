@@ -16,8 +16,7 @@ class PROJECT_LOCKDOWN_API UFoodItem : public UItem
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Food Properties", meta = (ClampMin = 0.0))
-		float HealAmount;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Food Properties", meta = (ClampMin = 0.0)) float HealAmount;
 	
 protected:
 	virtual void Use(ACustomCharacter* Character) override;

@@ -18,6 +18,8 @@ public:
 
 	UItem();
 
+	UPROPERTY(Transient) UWorld* World;
+
 	//Used for tooltip
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Item") FText UseActionText;
 
@@ -37,8 +39,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Item", meta=(ClampMin=0.0)) float Weight;
 
 	//Inventory that owns the item
-	UPROPERTY()
-	class UInventoryComponent* OwningInventory;
+	UPROPERTY() class UInventoryComponent* OwningInventory;
 
 	virtual void Use(class ACustomCharacter* Character) PURE_VIRTUAL(UItem,);
 

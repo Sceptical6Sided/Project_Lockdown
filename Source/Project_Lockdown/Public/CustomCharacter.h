@@ -13,7 +13,9 @@ class PROJECT_LOCKDOWN_API ACustomCharacter : public ACharacter
 
 protected:
 	//set Custom Movement Component as the movement component
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Movement) class UCustomCharacterMovementComponent* CustomCharacterMovementComponent;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement") class UCustomCharacterMovementComponent* CustomCharacterMovementComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory") class UInventoryComponent* Inventory;
 
 public:
 	// Sets default values for this character's properties
@@ -21,9 +23,11 @@ public:
 
 	bool bPressedCustomJump;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Health", meta = (ClampMin = 0.0))
-	float Health = 100.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Health", meta = (ClampMin = 0.0)) float Health = 100.f;
 
+	UFUNCTION(BlueprintCallable, Category = "Items")
+	void UseItem(class UItem* Item);
+	
 	virtual void Jump() override;
 	virtual void StopJumping() override;
 
