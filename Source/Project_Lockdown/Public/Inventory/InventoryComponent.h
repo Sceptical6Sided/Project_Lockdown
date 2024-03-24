@@ -21,7 +21,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Instanced) TArray<class UItem*> DefaultItems;
 	UPROPERTY(EditDefaultsOnly, Category = "Inventory") int32 Capacity;
 	UPROPERTY(BlueprintAssignable, Category = "Inventory") FOnInventoryUpdated OnInventoryUpdated;
-	UPROPERTY(EditDefaultsOnly, Category = "Inventory") TArray<class UItem*> Items;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory") TArray<class UItem*> Items;
 
 protected:
 	// Called when the game starts
