@@ -21,6 +21,9 @@ public:
 
 	bool bPressedCustomJump;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Health", meta = (ClampMin = 0.0))
+	float Health = 100.f;
+
 	virtual void Jump() override;
 	virtual void StopJumping() override;
 

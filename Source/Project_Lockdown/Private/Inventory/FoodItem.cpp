@@ -3,3 +3,11 @@
 
 #include "Inventory/FoodItem.h"
 
+
+void UFoodItem::Use(ACustomCharacter* Character)
+{
+	if (Character)
+	{
+		Character->Health += HealAmount;
+	}
+}
