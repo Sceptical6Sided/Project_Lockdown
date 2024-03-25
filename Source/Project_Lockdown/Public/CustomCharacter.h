@@ -15,8 +15,12 @@ protected:
 	//set Custom Movement Component as the movement component
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement") class UCustomCharacterMovementComponent* CustomCharacterMovementComponent;
 
+	//Sets Inventory Component for init
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory") class UInventoryComponent* Inventory;
 
+	//Sets Stat Component for init
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stats") class UStatsComponent* Stats;
+	
 public:
 	// Sets default values for this character's properties
 	ACustomCharacter(const FObjectInitializer& ObjectInitializer);

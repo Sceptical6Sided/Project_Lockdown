@@ -2,6 +2,7 @@
 
 #include "CustomCharacter.h"
 #include "CustomCharacterMovementComponent.h"
+#include "StatsComponent.h"
 #include "Inventory/InventoryComponent.h"
 #include "Inventory/Item.h"
 
@@ -15,6 +16,8 @@ ACustomCharacter::ACustomCharacter(const FObjectInitializer& ObjectInitializer) 
 
 	Inventory = CreateDefaultSubobject<UInventoryComponent>("Inventory");
 	Inventory->Capacity = 20;
+
+	Stats = CreateDefaultSubobject<UStatsComponent>("Stats");
 }
 
 void ACustomCharacter::UseItem(UItem* Item)
