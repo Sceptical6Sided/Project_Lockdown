@@ -158,8 +158,6 @@ FNetworkPredictionData_Client* UCustomCharacterMovementComponent::GetPredictionD
 	return ClientPredictionData;
 }
 
-
-
 //Getters and Helper functions
 bool UCustomCharacterMovementComponent::IsMovingOnGround() const
 {
@@ -204,7 +202,6 @@ float UCustomCharacterMovementComponent::GetMaxBrakingDeceleration() const
 		return -1.f;
 	}
 }
-
 
 //Movement Pipeline
 void UCustomCharacterMovementComponent::UpdateCharacterStateBeforeMovement(float DeltaSeconds)
@@ -320,8 +317,7 @@ void UCustomCharacterMovementComponent::PhysCustom(float deltaTime, int32 Iterat
 	}
 }
 
-void UCustomCharacterMovementComponent::OnMovementUpdated(float DeltaSeconds, const FVector& OldLocation,
-	const FVector& OldVelocity)
+void UCustomCharacterMovementComponent::OnMovementUpdated(float DeltaSeconds, const FVector& OldLocation, const FVector& OldVelocity)
 {
 	Super::OnMovementUpdated(DeltaSeconds, OldLocation, OldVelocity);
 	

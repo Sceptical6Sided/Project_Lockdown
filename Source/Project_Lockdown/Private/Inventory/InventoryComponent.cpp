@@ -9,6 +9,7 @@
 UInventoryComponent::UInventoryComponent()
 {
 	Capacity = 20;
+	StatsComponent = Cast<ACustomCharacter>(GetOwner())->Stats;
 }
 
 
@@ -30,6 +31,7 @@ bool UInventoryComponent::AddItem(UItem* Item)
 	Item->OwningInventory = this;
 	Item->World = GetWorld();
 	Items.Add(Item);
+	StatsComponent->Weight += Item->Weight;
 
 	//Call delegate to update UI
 	OnInventoryUpdated.Broadcast();
@@ -44,6 +46,7 @@ bool UInventoryComponent::RemoveItem(UItem* Item)
 		Item->OwningInventory = nullptr;
 		Item->World = nullptr;
 		Items.RemoveSingle(Item);
+		StatsComponent->Weight -= Item->Weight;
 		OnInventoryUpdated.Broadcast();
 		return true;
 	}

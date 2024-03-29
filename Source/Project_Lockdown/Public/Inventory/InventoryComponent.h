@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "StatsComponent.h"
 #include "Components/ActorComponent.h"
 #include "InventoryComponent.generated.h"
 
@@ -22,6 +23,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Inventory") int32 Capacity;
 	UPROPERTY(BlueprintAssignable, Category = "Inventory") FOnInventoryUpdated OnInventoryUpdated;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory") TArray<class UItem*> Items;
+	UPROPERTY(Transient) UStatsComponent* StatsComponent;
 
 protected:
 	// Called when the game starts
