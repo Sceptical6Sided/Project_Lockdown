@@ -73,36 +73,36 @@ private:
 	UPROPERTY(EditDefaultsOnly) float StaminaRegen_Delay = 1.f;
 
 	//Sprint
-	UPROPERTY(EditDefaultsOnly) float Sprint_MaxSpeed = 1200.f;
+	UPROPERTY(EditDefaultsOnly,Category="Sprint") float Sprint_MaxSpeed = 1200.f;
 	UPROPERTY(EditDefaultsOnly) float Walk_MaxSpeed = 600.f;
 
 	//Slide
-	UPROPERTY(EditDefaultsOnly) float Slide_MinSpeed=500.f;
-	UPROPERTY(EditDefaultsOnly) float Slide_MaxSpeed=500.f;
-	UPROPERTY(EditDefaultsOnly) float Slide_EnterImpulse=300.f;
-	UPROPERTY(EditDefaultsOnly) float Slide_GravityForce=100.f;
-	UPROPERTY(EditDefaultsOnly) float Slide_FrictionFactor=0.5f;
-	UPROPERTY(EditDefaultsOnly) float Slide_BrakingDeceleration=1000.f;
+	UPROPERTY(EditDefaultsOnly,Category="Slide") float Slide_MinSpeed=500.f;
+	UPROPERTY(EditDefaultsOnly,Category="Slide") float Slide_MaxSpeed=500.f;
+	UPROPERTY(EditDefaultsOnly,Category="Slide") float Slide_EnterImpulse=300.f;
+	UPROPERTY(EditDefaultsOnly,Category="Slide") float Slide_GravityForce=100.f;
+	UPROPERTY(EditDefaultsOnly,Category="Slide") float Slide_FrictionFactor=0.5f;
+	UPROPERTY(EditDefaultsOnly,Category="Slide") float Slide_BrakingDeceleration=1000.f;
 
 	//Prone
-	UPROPERTY(EditDefaultsOnly) float Prone_EnterHoldDuration = .2f;
-	UPROPERTY(EditDefaultsOnly) float Prone_SlideEnterImpulse = 300.f;
-	UPROPERTY(EditDefaultsOnly) float Prone_MaxSpeed = 300.f;
-	UPROPERTY(EditDefaultsOnly) float Prone_BrakingDeceleration = 2500.f;
+	UPROPERTY(EditDefaultsOnly,Category="Prone") float Prone_EnterHoldDuration = .2f;
+	UPROPERTY(EditDefaultsOnly,Category="Prone") float Prone_SlideEnterImpulse = 300.f;
+	UPROPERTY(EditDefaultsOnly,Category="Prone") float Prone_MaxSpeed = 300.f;
+	UPROPERTY(EditDefaultsOnly,Category="Prone") float Prone_BrakingDeceleration = 2500.f;
 
 	//Mantle
-	UPROPERTY(EditDefaultsOnly) float Mantle_MaxDistance = 200.f;
-	UPROPERTY(EditDefaultsOnly) float Mantle_ReachHeight = 50.f;
-	UPROPERTY(EditDefaultsOnly) float Mantle_MinDepth = 30.f;
-	UPROPERTY(EditDefaultsOnly) float Mantle_MinWallSteepnessAngle = 75.f;
-	UPROPERTY(EditDefaultsOnly) float Mantle_MaxSurfaceAngle = 40.f;
-	UPROPERTY(EditDefaultsOnly) float Mantle_MaxAlignmentAngle = 45.f;
-	UPROPERTY(EditDefaultsOnly) UAnimMontage* TallMantleMontage;
-	UPROPERTY(EditDefaultsOnly) UAnimMontage* TransitionTallMantleMontage;
-	UPROPERTY(EditDefaultsOnly) UAnimMontage* ProxyTallMantleMontage;
-	UPROPERTY(EditDefaultsOnly) UAnimMontage* ShortMantleMontage;
-	UPROPERTY(EditDefaultsOnly) UAnimMontage* TransitionShortMantleMontage;
-	UPROPERTY(EditDefaultsOnly) UAnimMontage* ProxyShortMantleMontage;
+	UPROPERTY(EditDefaultsOnly,Category="Mantle") float Mantle_MaxDistance = 200.f;
+	UPROPERTY(EditDefaultsOnly,Category="Mantle") float Mantle_ReachHeight = 50.f;
+	UPROPERTY(EditDefaultsOnly,Category="Mantle") float Mantle_MinDepth = 30.f;
+	UPROPERTY(EditDefaultsOnly,Category="Mantle") float Mantle_MinWallSteepnessAngle = 75.f;
+	UPROPERTY(EditDefaultsOnly,Category="Mantle") float Mantle_MaxSurfaceAngle = 40.f;
+	UPROPERTY(EditDefaultsOnly,Category="Mantle") float Mantle_MaxAlignmentAngle = 45.f;
+	UPROPERTY(EditDefaultsOnly,Category="Mantle") UAnimMontage* TallMantleMontage;
+	UPROPERTY(EditDefaultsOnly,Category="Mantle") UAnimMontage* TransitionTallMantleMontage;
+	UPROPERTY(EditDefaultsOnly,Category="Mantle") UAnimMontage* ProxyTallMantleMontage;
+	UPROPERTY(EditDefaultsOnly,Category="Mantle") UAnimMontage* ShortMantleMontage;
+	UPROPERTY(EditDefaultsOnly,Category="Mantle") UAnimMontage* TransitionShortMantleMontage;
+	UPROPERTY(EditDefaultsOnly,Category="Mantle") UAnimMontage* ProxyShortMantleMontage;
 
 	//Transient
 	UPROPERTY(Transient) ACustomCharacter* CustomCharacterOwner;

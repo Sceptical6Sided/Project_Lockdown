@@ -15,7 +15,16 @@ class PROJECT_LOCKDOWN_API UStatsComponent : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UStatsComponent();
-
+	
+//Stamina variables
+public:
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Stamina") float Stamina = 100.f;
+private:
+	UPROPERTY(EditDefaultsOnly,Category="Stamina") float StaminaDecay = 0.5f;
+	UPROPERTY(EditDefaultsOnly,Category="Stamina") float StaminaRegen = 0.5f;
+	UPROPERTY(EditDefaultsOnly,Category="Stamina") float StaminaRegen_Rate = 0.25f;
+	UPROPERTY(EditDefaultsOnly,Category="Stamina") float StaminaRegen_Delay = 1.f;
+	
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
