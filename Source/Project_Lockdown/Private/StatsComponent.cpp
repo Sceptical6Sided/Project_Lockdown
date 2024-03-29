@@ -19,3 +19,18 @@ void UStatsComponent::BeginPlay()
 	
 }
 
+void UStatsComponent::DecayStamina()
+{
+	Stamina -= StaminaDecay;
+}
+
+void UStatsComponent::StartRegenStamina()
+{
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle_StaminaRegen,this, &UStatsComponent::RegenStamina, StaminaRegen_Rate, true, StaminaRegen_Delay);
+}
+
+void UStatsComponent::StopRegenStamina()
+{
+	GetWorld()->GetTimerManager().ClearTimer(TimerHandle_StaminaRegen);
+}
+

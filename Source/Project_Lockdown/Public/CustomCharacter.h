@@ -10,16 +10,17 @@ UCLASS()
 class PROJECT_LOCKDOWN_API ACustomCharacter : public ACharacter
 {
 	GENERATED_BODY()
-
+	
+public:
+	//Sets Stat Component for init
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stats") class UStatsComponent* Stats;
+	
 protected:
 	//set Custom Movement Component as the movement component
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement") class UCustomCharacterMovementComponent* CustomCharacterMovementComponent;
 
 	//Sets Inventory Component for init
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory") class UInventoryComponent* Inventory;
-
-	//Sets Stat Component for init
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stats") class UStatsComponent* Stats;
 	
 public:
 	// Sets default values for this character's properties
@@ -34,7 +35,7 @@ public:
 	
 	virtual void Jump() override;
 	virtual void StopJumping() override;
-
+	
 	FCollisionQueryParams GetIgnoreCharacterParams() const;
 
 protected:
@@ -48,4 +49,5 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION(BlueprintCallable) UStatsComponent* GetStatsComponent() const;
 };

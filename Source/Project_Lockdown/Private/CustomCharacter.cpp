@@ -45,6 +45,12 @@ void ACustomCharacter::StopJumping()
 	bPressedCustomJump = false;
 }
 
+//Getter function for StatsComponent
+UStatsComponent* ACustomCharacter::GetStatsComponent() const
+{
+	return Stats;
+}
+
 //Returns an array of QueryParams mainly used when doing traces for collisions
 FCollisionQueryParams ACustomCharacter::GetIgnoreCharacterParams() const
 {

@@ -6,6 +6,7 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Character.h"
 #include "DrawDebugHelpers.h"
+#include "StatsComponent.h"
 #include "Net/UnrealNetwork.h"
 
 //Helper Macros
@@ -128,8 +129,9 @@ void UCustomCharacterMovementComponent::InitializeComponent()
 	Super::InitializeComponent();
 
 	CustomCharacterOwner = Cast<ACustomCharacter>(GetOwner());
-}
 
+	StatsComponent = CustomCharacterOwner->Stats;
+}
 
 
 // Networking
@@ -207,13 +209,13 @@ float UCustomCharacterMovementComponent::GetMaxBrakingDeceleration() const
 //Movement Pipeline
 void UCustomCharacterMovementComponent::UpdateCharacterStateBeforeMovement(float DeltaSeconds)
 {
-	if(MovementMode == MOVE_Walking && Safe_bWantsToSprint && Stamina<=0)
+	if(MovementMode == MOVE_Walking && Safe_bWantsToSprint && StatsComponent->Stamina<=0)
 	{
 		Safe_bWantsToSprint = false;
 	}
 	if (MovementMode == MOVE_Walking && Safe_bWantsToSprint && Safe_bPrevWantsToCrouch)
 	{
-		GetWorld()->GetTimerManager().ClearTimer(TimerHandle_StaminaRegen);
+		StatsComponent->StopRegenStamina();
 		if(CanSlide())
 		{
 			SetMovementMode(MOVE_Custom, CMOVE_Slide);
@@ -283,7 +285,7 @@ void UCustomCharacterMovementComponent::UpdateCharacterStateAfterMovement(float 
 {
 	if(MovementMode == MOVE_Walking && Safe_bWantsToSprint)
 	{
-		Stamina = Stamina - StaminaDecay;
+		StatsComponent->DecayStamina();
 	}
 	Super::UpdateCharacterStateAfterMovement(DeltaSeconds);
 
@@ -346,7 +348,7 @@ void UCustomCharacterMovementComponent::SprintPressed()
 void UCustomCharacterMovementComponent::SprintReleased()
 {
 	Safe_bWantsToSprint = false;
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle_StaminaRegen,this, &UCustomCharacterMovementComponent::RegenStamina, StaminaRegen_Rate, true, StaminaRegen_Delay);
+	StatsComponent->StartRegenStamina();
 }
 
 void UCustomCharacterMovementComponent::CrouchPressed()
