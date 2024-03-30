@@ -14,9 +14,6 @@ UStatsComponent::UStatsComponent()
 void UStatsComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
-	
 }
 
 void UStatsComponent::DecayStamina()

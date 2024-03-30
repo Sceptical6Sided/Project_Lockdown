@@ -16,8 +16,9 @@ ACustomCharacter::ACustomCharacter(const FObjectInitializer& ObjectInitializer) 
 
 	Inventory = CreateDefaultSubobject<UInventoryComponent>("Inventory");
 	Inventory->Capacity = 20;
-
+	
 	Stats = CreateDefaultSubobject<UStatsComponent>("Stats");
+	Inventory->StatsComponent = Stats;
 }
 
 void ACustomCharacter::UseItem(UItem* Item)

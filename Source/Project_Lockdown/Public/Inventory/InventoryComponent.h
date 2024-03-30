@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CustomCharacter.h"
 #include "StatsComponent.h"
 #include "Components/ActorComponent.h"
 #include "InventoryComponent.generated.h"

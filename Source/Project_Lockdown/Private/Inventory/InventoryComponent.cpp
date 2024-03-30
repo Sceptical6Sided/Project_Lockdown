@@ -9,7 +9,6 @@
 UInventoryComponent::UInventoryComponent()
 {
 	Capacity = 20;
-	StatsComponent = Cast<ACustomCharacter>(GetOwner())->Stats;
 }
 
 
