@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "CustomCharacter.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "Item.generated.h"
 
 /**
@@ -40,6 +41,21 @@ public:
 
 	//Inventory that owns the item
 	UPROPERTY() class UInventoryComponent* OwningInventory;
+
+#pragma region Throwing
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Throw", meta=(ClampMin=0.0)) float InitialSpeed = 800;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Throw", meta=(ClampMin=0.0)) float MaxSpeed = 8500;
+	
+	//Flag to tell the system if the item is throwable
+	UPROPERTY(EditDefaultsOnly, Category="Throw")
+	bool bIsThrowable;
+	
+	//Projectile Movement Component used for throwing the item
+	UPROPERTY(EditAnywhere, Category="Throw")
+	class UProjectileMovementComponent* ProjectileMovementComponent;
+	
+#pragma endregion
 
 	virtual void Use(class ACustomCharacter* Character) PURE_VIRTUAL(UItem,);
 

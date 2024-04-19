@@ -30,6 +30,14 @@ void ACustomCharacter::UseItem(UItem* Item)
 	}
 }
 
+/*void ACustomCharacter::ThrowItem(AThrowable* Throwable)
+{
+	if(Item)
+	{
+		GetWorld()->
+	}
+}*/
+
 void ACustomCharacter::Jump()
 {
 	Super::Jump();

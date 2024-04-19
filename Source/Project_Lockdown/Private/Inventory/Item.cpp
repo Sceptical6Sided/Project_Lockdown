@@ -8,4 +8,9 @@ UItem::UItem()
 	Weight = 1.f;
 	ItemDisplayName = FText::FromString("Item");
 	UseActionText = FText::FromString("Use");
+	bIsThrowable = false;
+
+	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Prjectile Movement"));
+	ProjectileMovementComponent->InitialSpeed = InitialSpeed;
+	ProjectileMovementComponent->InitialSpeed = MaxSpeed;
 }

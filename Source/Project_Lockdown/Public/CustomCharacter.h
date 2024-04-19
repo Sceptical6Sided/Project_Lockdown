@@ -32,6 +32,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Items")
 	void UseItem(class UItem* Item);
+
+	//UFUNCTION(BlueprintCallable, Category = "Items")
+	//void ThrowItem(class AThrowable* Throwable);
 	
 	virtual void Jump() override;
 	virtual void StopJumping() override;
