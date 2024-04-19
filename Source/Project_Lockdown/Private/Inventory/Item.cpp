@@ -8,5 +8,7 @@ AItem::AItem()
 	Weight = 1.f;
 	ItemDisplayName = FText::FromString("Item");
 	UseActionText = FText::FromString("Use");
+	ItemType = EItemType::IT_Junk;
 	bIsThrowable = false;
+	bIsSpecialItem=false;
 }
