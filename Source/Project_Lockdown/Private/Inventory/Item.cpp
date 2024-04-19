@@ -3,7 +3,7 @@
 
 #include "Inventory/Item.h"
 
-UItem::UItem()
+AItem::AItem()
 {
 	Weight = 1.f;
 	ItemDisplayName = FText::FromString("Item");

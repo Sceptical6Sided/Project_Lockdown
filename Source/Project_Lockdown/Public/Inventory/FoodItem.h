@@ -11,7 +11,7 @@
  * 
  */
 UCLASS()
-class PROJECT_LOCKDOWN_API UFoodItem : public UItem
+class PROJECT_LOCKDOWN_API AFoodItem : public AItem
 {
 	GENERATED_BODY()
 

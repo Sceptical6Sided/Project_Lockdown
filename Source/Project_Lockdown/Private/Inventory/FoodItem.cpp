@@ -4,7 +4,7 @@
 #include "Inventory/FoodItem.h"
 
 
-void UFoodItem::Use(ACustomCharacter* Character)
+void AFoodItem::Use(ACustomCharacter* Character)
 {
 	if (Character)
 	{

@@ -30,7 +30,7 @@ ACustomCharacter::ACustomCharacter(const FObjectInitializer& ObjectInitializer) 
 	Inventory->StatsComponent = Stats;
 }
 
-void ACustomCharacter::UseItem(UItem* Item)
+void ACustomCharacter::UseItem(AItem* Item)
 {
 	if (Item)
 	{
@@ -39,7 +39,7 @@ void ACustomCharacter::UseItem(UItem* Item)
 	}
 }
 
-void ACustomCharacter::ThrowItem(UItem* Item, USceneComponent* ThrowableSpawner)
+void ACustomCharacter::ThrowItem(AItem* Item, USceneComponent* ThrowableSpawner)
 {
 	FVector ThrowableLocation = ThrowableSpawner->GetComponentLocation();
 	AThrowable* ThrownActor = GetWorld()->SpawnActor<AThrowable>(Throwable, ThrowableLocation , this->GetActorRotation());

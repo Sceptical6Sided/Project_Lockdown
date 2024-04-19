@@ -20,10 +20,10 @@ public:
 	// Sets default values for this component's properties
 	UInventoryComponent();
 
-	UPROPERTY(EditDefaultsOnly, Instanced) TArray<class UItem*> DefaultItems;
+	UPROPERTY(EditDefaultsOnly, Instanced) TArray<class AItem*> DefaultItems;
 	UPROPERTY(EditDefaultsOnly, Category = "Inventory") int32 Capacity;
 	UPROPERTY(BlueprintAssignable, Category = "Inventory") FOnInventoryUpdated OnInventoryUpdated;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory") TArray<class UItem*> Items;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory") TArray<class AItem*> Items;
 	UPROPERTY(Transient) UStatsComponent* StatsComponent;
 
 protected:
@@ -32,6 +32,6 @@ protected:
 
 public:	
 	
-	bool AddItem(class UItem* Item);	
-	bool RemoveItem(class UItem* Item);	
+	bool AddItem(class AItem* Item);	
+	bool RemoveItem(class AItem* Item);	
 };

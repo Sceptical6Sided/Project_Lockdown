@@ -9,14 +9,14 @@
 /**
  * 
  */
-UCLASS(Abstract, BlueprintType, Blueprintable, EditInlineNew, DefaultToInstanced)
-class PROJECT_LOCKDOWN_API UItem : public UObject
+UCLASS(Abstract, BlueprintType, Blueprintable)
+class PROJECT_LOCKDOWN_API AItem : public AActor
 {
 	GENERATED_BODY()
 	
 public:
 
-	UItem();
+	AItem();
 
 	UPROPERTY(Transient) UWorld* World;
 
