@@ -41,13 +41,16 @@ void ACustomCharacter::UseItem(UItem* Item)
 
 void ACustomCharacter::ThrowItem(UItem* Item, USceneComponent* ThrowableSpawner)
 {
-	AThrowable* ThrownActor = GetWorld()->SpawnActor<AThrowable>(Throwable, ThrowableSpawner->GetComponentLocation(), ThrowableSpawner->GetComponentRotation());
+	FVector ThrowableLocation = ThrowableSpawner->GetComponentLocation();
+	AThrowable* ThrownActor = GetWorld()->SpawnActor<AThrowable>(Throwable, ThrowableLocation , this->GetActorRotation());
+	SLOG("Location: %s \n Rotation %s", *ThrowableLocation.ToString(), *this->GetActorRotation().ToString())
 
 	if(ThrownActor)
 	{
-		SLOG("Actor Spawned")
 		if(Item)
+		{
 			ThrownActor->ProjectileMesh = Item->PickUpMesh;
+		}
 	}
 }
 
