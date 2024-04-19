@@ -10,6 +10,8 @@ UENUM()
 enum EItemType
 {
 	IT_Junk			UMETA(DispalyName = "Junk"),
+	IT_Clothing		UMETA(DispalyName = "Clothing"),
+	IT_Container	UMETA(DispalyName = "Container"),
 	IT_Food			UMETA(DisplayName = "Food"),
 	IT_Armor		UMETA(DisplayName = "Armor"),
 	IT_Weapon		UMETA(DispalyName = "Weapon"),
