@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Inventory/Throwable.h"
 #include "CustomCharacter.generated.h"
 
 UCLASS()
@@ -30,11 +31,13 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Health", meta = (ClampMin = 0.0)) float Health = 100.f;
 
+	UPROPERTY(EditAnywhere) TSubclassOf<AThrowable> Throwable;
+	
 	UFUNCTION(BlueprintCallable, Category = "Items")
 	void UseItem(class UItem* Item);
 
-	//UFUNCTION(BlueprintCallable, Category = "Items")
-	//void ThrowItem(class AThrowable* Throwable);
+	UFUNCTION(BlueprintCallable, Category = "Items")
+	void ThrowItem(UItem* Item, USceneComponent* ThrowableSpawner);
 	
 	virtual void Jump() override;
 	virtual void StopJumping() override;

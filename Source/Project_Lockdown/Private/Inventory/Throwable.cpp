@@ -6,9 +6,14 @@
 // Sets default values
 AThrowable::AThrowable()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	
+	ProjectileMesh = CreateDefaultSubobject<UStaticMesh>(TEXT("ProjectileMesh"));
+	
+	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 
+	ProjectileMovementComponent->InitialSpeed =  800.f;
+	ProjectileMovementComponent->MaxSpeed = 8500.f;
 }
 
 // Called when the game starts or when spawned

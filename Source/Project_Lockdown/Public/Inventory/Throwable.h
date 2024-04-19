@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "Throwable.generated.h"
 
 UCLASS()
@@ -23,4 +24,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY(EditAnywhere) UStaticMesh* ProjectileMesh;
+
+	UPROPERTY(EditAnywhere) UProjectileMovementComponent* ProjectileMovementComponent;
 };

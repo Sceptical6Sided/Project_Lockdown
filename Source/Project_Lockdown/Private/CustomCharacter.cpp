@@ -5,6 +5,15 @@
 #include "StatsComponent.h"
 #include "Inventory/InventoryComponent.h"
 #include "Inventory/Item.h"
+#include "Inventory/Throwable.h"
+
+//Helper Macro
+#if 1
+float MacroDuration = 2.f;
+#define SLOG(x,...) if(GEngine){GEngine->AddOnScreenDebugMessage(-1, MacroDuration ? MacroDuration : -1.f, FColor::Yellow, FString::Printf(TEXT(x), ##__VA_ARGS__));}
+#else
+#define SLOG(x,...)
+#endif
 
 // Sets default values
 ACustomCharacter::ACustomCharacter(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass<UCustomCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
@@ -30,13 +39,17 @@ void ACustomCharacter::UseItem(UItem* Item)
 	}
 }
 
-/*void ACustomCharacter::ThrowItem(AThrowable* Throwable)
+void ACustomCharacter::ThrowItem(UItem* Item, USceneComponent* ThrowableSpawner)
 {
-	if(Item)
+	AThrowable* ThrownActor = GetWorld()->SpawnActor<AThrowable>(Throwable, ThrowableSpawner->GetComponentLocation(), ThrowableSpawner->GetComponentRotation());
+
+	if(ThrownActor)
 	{
-		GetWorld()->
+		SLOG("Actor Spawned")
+		if(Item)
+			ThrownActor->ProjectileMesh = Item->PickUpMesh;
 	}
-}*/
+}
 
 void ACustomCharacter::Jump()
 {

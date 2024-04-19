@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "CustomCharacter.h"
-#include "GameFramework/ProjectileMovementComponent.h"
 #include "Item.generated.h"
 
 /**
@@ -50,10 +49,6 @@ public:
 	//Flag to tell the system if the item is throwable
 	UPROPERTY(EditDefaultsOnly, Category="Throw")
 	bool bIsThrowable;
-	
-	//Projectile Movement Component used for throwing the item
-	UPROPERTY(EditAnywhere, Category="Throw")
-	class UProjectileMovementComponent* ProjectileMovementComponent;
 	
 #pragma endregion
 
