@@ -5,4 +5,13 @@
 
 UInteractionComponent::UInteractionComponent()
 {
+	SetComponentTickEnabled(false);
+
+	//Set base values
+	InteractionTime = 0.f;
+	InteractionDistance = 200.f;
+	InteractableNameText = FText::FromString("Interactable");
+	InteractableActionText = FText::FromString("Interact");
+	bAllowMultipleUsers = false;
+	
 }
