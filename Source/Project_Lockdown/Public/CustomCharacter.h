@@ -22,7 +22,7 @@ struct FInteractionData
 	UPROPERTY()
 	class UInteractionComponent* ViewedInteractionComponent;
 
-	//The time between checking for an interactable (set to 0.f for every tick)
+	//Time since we last checked for an interactable
 	UPROPERTY()
 	float LastInteractionCheckedTime;
 
@@ -91,6 +91,31 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	//The time between checking for an interactable (set to 0.f for every tick)
+	UPROPERTY(EditDefaultsOnly, Category="Interaction")
+	float InteractionCheckFrequency;
+
+	//Information about the current state of the interaction
+	UPROPERTY()
+	FInteractionData InteractionData;
+
+	//How far we should be checking for an interactable via line-trace (in centimeters)
+	UPROPERTY(EditDefaultsOnly, Category = "Interaction")
+	float InteractionCheckDistance;
+
+	//Helper function to return the current interactable faster (return nullptr if not looking at an intreactable)
+	FORCEINLINE class UInteractionComponent* GetInteractable() const {return InteractionData.ViewedInteractionComponent;}
+
+	void PerformInteractionCheck();
+
+	void CouldntFindNewInteractable();
+	void FoundNewInteractable(UInteractionComponent* Interactable);
+
+	void BeginInteract();
+	void EndInteract();
+
+	void Interact();
 
 public:	
 	// Called every frame

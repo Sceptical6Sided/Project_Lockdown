@@ -2,6 +2,7 @@
 
 #include "CustomCharacter.h"
 #include "CustomCharacterMovementComponent.h"
+#include "InteractionComponent.h"
 #include "StatsComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Inventory/InventoryComponent.h"
@@ -46,6 +47,9 @@ ACustomCharacter::ACustomCharacter(const FObjectInitializer& ObjectInitializer) 
 	VestMesh->SetupAttachment(GetMesh());
 	BackpackMesh = CreateDefaultSubobject<USkeletalMeshComponent>("BackpackMesh");
 	BackpackMesh->SetupAttachment(GetMesh());
+
+	InteractionCheckDistance = 1000.f;
+	InteractionCheckFrequency = 0.f;
 
 	Inventory = CreateDefaultSubobject<UInventoryComponent>("Inventory");
 	Inventory->Capacity = 20;
@@ -98,6 +102,73 @@ FCollisionQueryParams ACustomCharacter::GetIgnoreCharacterParams() const
 	return Params;
 }
 
+#pragma region Interaction
+
+void ACustomCharacter::PerformInteractionCheck()
+{
+	if(GetController() == nullptr)
+	{
+		return;
+	}
+
+	InteractionData.LastInteractionCheckedTime = GetWorld()->GetTimeSeconds();
+	
+	FVector EyesLocation;
+	FRotator EyesRotation;
+	GetController()->GetPlayerViewPoint(EyesLocation, EyesRotation);
+	
+	FVector TraceEnd = (EyesRotation.Vector() * InteractionCheckDistance) + EyesLocation;
+	FHitResult TraceHit;
+
+	if (GetWorld()->LineTraceSingleByChannel(TraceHit, EyesLocation, TraceEnd, ECC_Visibility, GetIgnoreCharacterParams()))
+	{
+		//Check if we hit an interactable object
+		if(TraceHit.GetActor())
+		{
+			if (UInteractionComponent* InteractionComponent = Cast<UInteractionComponent>(TraceHit.GetActor()->GetComponentByClass(UInteractionComponent::StaticClass())))
+			{
+				float Distance = (EyesLocation - TraceHit.ImpactPoint).Size();
+
+				if(InteractionComponent != GetInteractable() && Distance <= InteractionComponent->InteractionDistance)
+				{
+					FoundNewInteractable(InteractionComponent);
+				}
+				else if (Distance > InteractionComponent -> InteractionDistance && GetInteractable())
+				{
+					CouldntFindNewInteractable();
+				}
+
+				return;
+			}
+		}
+	}
+
+	CouldntFindNewInteractable();
+}
+
+void ACustomCharacter::CouldntFindNewInteractable()
+{
+}
+
+void ACustomCharacter::FoundNewInteractable(UInteractionComponent* Interactable)
+{
+	SLOG("New interactable found!")
+}
+
+void ACustomCharacter::BeginInteract()
+{
+}
+
+void ACustomCharacter::EndInteract()
+{
+}
+
+void ACustomCharacter::Interact()
+{
+}
+
+#pragma endregion
+
 // Called when the game starts or when spawned
 void ACustomCharacter::BeginPlay()
 {
@@ -110,6 +181,7 @@ void ACustomCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	PerformInteractionCheck();
 }
 
 // Called to bind functionality to input
