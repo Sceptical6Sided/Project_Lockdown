@@ -22,7 +22,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interaction")
 	float InteractionTime;
 
-	//The max distance the player can be away from this actor before you can interact
+	//The max distance the player can be away from this actor before you can interact (In centimeters)
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interaction")
 	float InteractionDistance;
 
