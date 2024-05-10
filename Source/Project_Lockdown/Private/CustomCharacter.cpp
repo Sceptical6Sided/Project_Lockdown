@@ -135,7 +135,7 @@ void ACustomCharacter::PerformInteractionCheck()
 				}
 				else if (Distance > InteractionComponent -> InteractionDistance && GetInteractable())
 				{
-					CouldntFindNewInteractable();
+					CantFindNewInteractable();
 				}
 
 				return;
@@ -143,10 +143,10 @@ void ACustomCharacter::PerformInteractionCheck()
 		}
 	}
 
-	CouldntFindNewInteractable();
+	CantFindNewInteractable();
 }
 
-void ACustomCharacter::CouldntFindNewInteractable()
+void ACustomCharacter::CantFindNewInteractable()
 {
 	if (InteractionData.ViewedInteractionComponent)
 	{
@@ -166,14 +166,58 @@ void ACustomCharacter::FoundNewInteractable(UInteractionComponent* Interactable)
 
 void ACustomCharacter::BeginInteract()
 {
+	if(!HasAuthority()) ServerBeginInteract();
+
+	InteractionData.bInteractHeld = true;
+
+	if (UInteractionComponent* Interactable = GetInteractable())
+	{
+		Interactable->BeginInteract(this);
+
+		if(FMath::IsNearlyZero(Interactable->InteractionTime))
+			Interact();
+		else
+			GetWorldTimerManager().SetTimer(TimerHandle_Interact, this, &ACustomCharacter::Interact, Interactable->InteractionTime, false);
+	}
 }
 
 void ACustomCharacter::EndInteract()
 {
+	if(!HasAuthority()) ServerEndInteract();
+
+	InteractionData.bInteractHeld = false;
+
+	GetWorldTimerManager().ClearTimer(TimerHandle_Interact);
+	if (UInteractionComponent* Interactable = GetInteractable())
+		Interactable->EndInteract(this);
+}
+
+void ACustomCharacter::ServerBeginInteract_Implementation()
+{
+	BeginInteract();
+}
+
+bool ACustomCharacter::ServerBeginInteract_Validate()
+{
+	return true;
+}
+
+void ACustomCharacter::ServerEndInteract_Implementation()
+{
+	EndInteract();
+}
+
+bool ACustomCharacter::ServerEndInteract_Validate()
+{
+	return true;
 }
 
 void ACustomCharacter::Interact()
 {
+	GetWorldTimerManager().ClearTimer(TimerHandle_Interact);
+
+	if (UInteractionComponent* Interactable = GetInteractable())
+		Interactable->Interact(this);
 }
 
 #pragma endregion

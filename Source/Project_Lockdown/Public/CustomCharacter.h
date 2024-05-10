@@ -104,17 +104,25 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Interaction")
 	float InteractionCheckDistance;
 
-	//Helper function to return the current interactable faster (return nullptr if not looking at an intreactable)
+	//Helper function to return the current interactable faster (return nullptr if not looking at an interactable)
 	FORCEINLINE class UInteractionComponent* GetInteractable() const {return InteractionData.ViewedInteractionComponent;}
+
+	FTimerHandle TimerHandle_Interact;
 
 	void PerformInteractionCheck();
 
-	void CouldntFindNewInteractable();
+	void CantFindNewInteractable();
 	void FoundNewInteractable(UInteractionComponent* Interactable);
 
 	void BeginInteract();
 	void EndInteract();
 
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerBeginInteract();
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerEndInteract();
+	
 	void Interact();
 
 public:	

@@ -21,3 +21,48 @@ UInteractionComponent::UInteractionComponent()
 	SetActive(true);
 	SetHiddenInGame(true);
 }
+
+#pragma region Focus
+
+void UInteractionComponent::BeginFocus(ACustomCharacter* Character)
+{
+	if(!IsActive() || !GetOwner() || !Character)
+		return;
+
+	OnBeginFocus.Broadcast(Character);
+	
+	SetHiddenInGame(false);
+
+	//Handles outlines around interactable objects by setting render custom depth
+	/*
+	if(!GetOwner()->HasAuthority())
+	{
+		for (auto& VisualComp : GetOwner()->GetComponentByClass(UPrimitiveComponent::StaticClass()))
+		{
+			if(UPrimitiveComponent* Prim = Cast<UPrimitiveComponent>(VisualComp))
+			{
+				Prim->SetRenderCustomDepth(true);
+			}
+		}
+	}*/
+}
+
+void UInteractionComponent::EndFocus(ACustomCharacter* Character)
+{
+	
+}
+
+void UInteractionComponent::BeginInteract(ACustomCharacter* Character)
+{
+}
+
+void UInteractionComponent::EndInteract(ACustomCharacter* Character)
+{
+}
+
+void UInteractionComponent::Interact(ACustomCharacter* Character)
+{
+	OnInteract.Broadcast(Character);
+}
+
+#pragma endregion 
