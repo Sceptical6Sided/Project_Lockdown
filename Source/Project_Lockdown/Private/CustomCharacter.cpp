@@ -148,11 +148,20 @@ void ACustomCharacter::PerformInteractionCheck()
 
 void ACustomCharacter::CouldntFindNewInteractable()
 {
+	if (InteractionData.ViewedInteractionComponent)
+	{
+		InteractionData.ViewedInteractionComponent->SetHiddenInGame(true);
+		InteractionData.ViewedInteractionComponent = nullptr;
+	}
 }
 
 void ACustomCharacter::FoundNewInteractable(UInteractionComponent* Interactable)
 {
-	SLOG("New interactable found!")
+	if(Interactable)
+	{
+		Interactable->SetHiddenInGame(false);
+		InteractionData.ViewedInteractionComponent = Interactable;
+	}
 }
 
 void ACustomCharacter::BeginInteract()
