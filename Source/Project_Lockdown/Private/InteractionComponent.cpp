@@ -4,6 +4,7 @@
 #include "InteractionComponent.h"
 
 #include "CustomCharacter.h"
+#include "Widgets/InteractionWidget.h"
 
 UInteractionComponent::UInteractionComponent()
 {
@@ -26,11 +27,23 @@ UInteractionComponent::UInteractionComponent()
 
 void UInteractionComponent::SetInteractableNameText(const FText& NewNameText)
 {
-	
+	InteractableNameText = NewNameText;
+	RefreshWidget();
 }
 
 void UInteractionComponent::SetInteractableActionText(const FText& NewActionText)
 {
+	InteractableActionText = NewActionText;
+	RefreshWidget();
+}
+
+void UInteractionComponent::RefreshWidget()
+{
+	if(!bHiddenInGame && GetOwner()->GetNetMode() != NM_DedicatedServer)
+	{
+		if (UInteractionWidget* InteractionWidget = Cast<UInteractionWidget>(GetUserWidgetObject()))
+			InteractionWidget->UpdateInteractionWidget(this);
+	}
 }
 
 float UInteractionComponent::GetInteractionPercentage()
@@ -66,10 +79,6 @@ bool UInteractionComponent::CanInteract(ACustomCharacter* Character) const
 {
 	const bool bPlayerAlreadyInteracting = !bAllowMultipleUsers && Interacting_Characters.Num() >= 1;
 	return !bPlayerAlreadyInteracting && IsActive() && GetOwner() != nullptr && Character != nullptr;
-}
-
-void UInteractionComponent::RefreshWidget()
-{
 }
 
 #pragma region Focus
