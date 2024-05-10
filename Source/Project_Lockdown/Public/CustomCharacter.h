@@ -53,8 +53,6 @@ public:
 	bool bPressedCustomJump;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Health", meta = (ClampMin = 0.0)) float Health = 100.f;
-
-	UPROPERTY(EditAnywhere) TSubclassOf<AThrowable> Throwable;
 	
 	UFUNCTION(BlueprintCallable, Category = "Items")
 	void UseItem(class AItem* Item);
