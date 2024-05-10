@@ -13,5 +13,11 @@ UInteractionComponent::UInteractionComponent()
 	InteractableNameText = FText::FromString("Interactable");
 	InteractableActionText = FText::FromString("Interact");
 	bAllowMultipleUsers = false;
-	
+
+	Space = EWidgetSpace::Screen;
+	DrawSize = FIntPoint(400,100);
+	bDrawAtDesiredSize = true;
+
+	SetActive(true);
+	SetHiddenInGame(true);
 }
