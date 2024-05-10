@@ -3,3 +3,6 @@
 
 #include "InteractionComponent.h"
 
+UInteractionComponent::UInteractionComponent()
+{
+}
