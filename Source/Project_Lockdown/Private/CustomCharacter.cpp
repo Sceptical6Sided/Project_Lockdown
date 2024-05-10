@@ -3,9 +3,9 @@
 #include "CustomCharacter.h"
 #include "CustomCharacterMovementComponent.h"
 #include "StatsComponent.h"
+#include "Camera/CameraComponent.h"
 #include "Inventory/InventoryComponent.h"
 #include "Inventory/Item.h"
-#include "Inventory/Throwable.h"
 
 //Helper Macro
 #if 1
@@ -23,6 +23,30 @@ ACustomCharacter::ACustomCharacter(const FObjectInitializer& ObjectInitializer) 
 
 	CustomCharacterMovementComponent = Cast<UCustomCharacterMovementComponent>(GetCharacterMovement());
 
+	CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
+	CameraComponent->SetupAttachment(GetMesh());
+	CameraComponent->bUsePawnControlRotation = true;
+
+
+	/*Setup for modular character
+	 *(Base mesh is used for the characters head,so
+	 *every part of the mesh gets parented to the head of the character)
+	 */
+	HelmetMesh = CreateDefaultSubobject<USkeletalMeshComponent>("HelmetMesh");
+	HelmetMesh->SetupAttachment(GetMesh());
+	ChestMesh = CreateDefaultSubobject<USkeletalMeshComponent>("ChestMesh");
+	ChestMesh->SetupAttachment(GetMesh());
+	LegsMesh = CreateDefaultSubobject<USkeletalMeshComponent>("LegsMesh");
+	LegsMesh->SetupAttachment(GetMesh());
+	FeetMesh = CreateDefaultSubobject<USkeletalMeshComponent>("FeetMesh");
+	FeetMesh->SetupAttachment(GetMesh());
+	HandsMesh = CreateDefaultSubobject<USkeletalMeshComponent>("HandsMesh");
+	HandsMesh->SetupAttachment(GetMesh());
+	VestMesh = CreateDefaultSubobject<USkeletalMeshComponent>("VestMesh");
+	VestMesh->SetupAttachment(GetMesh());
+	BackpackMesh = CreateDefaultSubobject<USkeletalMeshComponent>("BackpackMesh");
+	BackpackMesh->SetupAttachment(GetMesh());
+
 	Inventory = CreateDefaultSubobject<UInventoryComponent>("Inventory");
 	Inventory->Capacity = 20;
 	
@@ -36,21 +60,6 @@ void ACustomCharacter::UseItem(AItem* Item)
 	{
 		Item->Use(this);
 		Item->OnUse(this); //Bp event
-	}
-}
-
-void ACustomCharacter::ThrowItem(AItem* Item, USceneComponent* ThrowableSpawner)
-{
-	FVector ThrowableLocation = ThrowableSpawner->GetComponentLocation();
-	AThrowable* ThrownActor = GetWorld()->SpawnActor<AThrowable>(Throwable, ThrowableLocation , this->GetActorRotation());
-	SLOG("Location: %s \n Rotation %s", *ThrowableLocation.ToString(), *this->GetActorRotation().ToString())
-
-	if(ThrownActor)
-	{
-		if(Item)
-		{
-			ThrownActor->ProjectileMesh = Item->PickUpMesh;
-		}
 	}
 }
 

@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "Inventory/Throwable.h"
 #include "CustomCharacter.generated.h"
 
 UCLASS()
@@ -27,6 +26,30 @@ public:
 	// Sets default values for this character's properties
 	ACustomCharacter(const FObjectInitializer& ObjectInitializer);
 
+	UPROPERTY(EditAnywhere, Category = "Components")
+	class UCameraComponent* CameraComponent;
+
+	UPROPERTY(EditAnywhere, Category = "Components")
+	class USkeletalMeshComponent* HelmetMesh;
+
+	UPROPERTY(EditAnywhere, Category = "Components")
+	class USkeletalMeshComponent* ChestMesh;
+
+	UPROPERTY(EditAnywhere, Category = "Components")
+	class USkeletalMeshComponent* LegsMesh;
+
+	UPROPERTY(EditAnywhere, Category = "Components")
+	class USkeletalMeshComponent* FeetMesh;
+
+	UPROPERTY(EditAnywhere, Category = "Components")
+	class USkeletalMeshComponent* HandsMesh;
+	
+	UPROPERTY(EditAnywhere, Category = "Components")
+	class USkeletalMeshComponent* VestMesh;
+
+	UPROPERTY(EditAnywhere, Category = "Components")
+	class USkeletalMeshComponent* BackpackMesh;
+
 	bool bPressedCustomJump;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Health", meta = (ClampMin = 0.0)) float Health = 100.f;
@@ -35,9 +58,6 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "Items")
 	void UseItem(class AItem* Item);
-
-	UFUNCTION(BlueprintCallable, Category = "Items")
-	void ThrowItem(AItem* Item, USceneComponent* ThrowableSpawner);
 	
 	virtual void Jump() override;
 	virtual void StopJumping() override;
