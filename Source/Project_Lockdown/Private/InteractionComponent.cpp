@@ -86,11 +86,15 @@ bool UInteractionComponent::CanInteract(ACustomCharacter* Character) const
 void UInteractionComponent::BeginFocus(ACustomCharacter* Character)
 {
 	if(!IsActive() || !GetOwner() || !Character)
+	{
 		return;
+	}
 
 	OnBeginFocus.Broadcast(Character);
 	
 	SetHiddenInGame(false);
+
+	RefreshWidget();
 }
 
 void UInteractionComponent::EndFocus(ACustomCharacter* Character)

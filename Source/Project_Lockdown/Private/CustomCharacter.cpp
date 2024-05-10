@@ -261,8 +261,10 @@ void ACustomCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	const bool bIsInteractingOnServer = (HasAuthority() && IsInteracting());
-	if ((!HasAuthority() || bIsInteractingOnServer) && GetWorld() -> TimeSince(InteractionData.LastInteractionCheckedTime) > InteractionCheckFrequency)
+	if ((HasAuthority() || bIsInteractingOnServer) && (GetWorld() -> TimeSince(InteractionData.LastInteractionCheckedTime) > InteractionCheckFrequency))
+	{
 		PerformInteractionCheck();
+	}
 }
 
 // Called to bind functionality to input
