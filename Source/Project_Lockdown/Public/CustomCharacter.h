@@ -114,8 +114,9 @@ protected:
 	void CantFindNewInteractable();
 	void FoundNewInteractable(UInteractionComponent* Interactable);
 
-	void BeginInteract();
-	void EndInteract();
+	
+	UFUNCTION(BlueprintCallable) void BeginInteract();
+	UFUNCTION(BlueprintCallable) void EndInteract();
 
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerBeginInteract();
