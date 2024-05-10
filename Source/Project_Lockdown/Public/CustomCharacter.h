@@ -6,6 +6,31 @@
 #include "GameFramework/Character.h"
 #include "CustomCharacter.generated.h"
 
+USTRUCT()
+struct FInteractionData
+{
+	GENERATED_BODY()
+
+	FInteractionData()
+	{
+		ViewedInteractionComponent = nullptr;
+		LastInteractionCheckedTime = 0.f;
+		bInteractHeld = false;
+	}
+		
+	//The current interactable component we're viewing, if there is one
+	UPROPERTY()
+	class UInteractionComponent* ViewedInteractionComponent;
+
+	//The time between checking for an interactable (set to 0.f for every tick)
+	UPROPERTY()
+	float LastInteractionCheckedTime;
+
+	//Whether the local player is holding the interact key
+	UPROPERTY()
+	bool bInteractHeld;
+};
+
 UCLASS()
 class PROJECT_LOCKDOWN_API ACustomCharacter : public ACharacter
 {
