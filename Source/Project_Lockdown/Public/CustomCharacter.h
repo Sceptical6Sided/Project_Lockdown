@@ -92,7 +92,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	//The time between checking for an interactable (set to 0.f for every tick)
+	//The time between checking for an interactable in seconds (set to 0.f for every tick)
 	UPROPERTY(EditDefaultsOnly, Category="Interaction")
 	float InteractionCheckFrequency;
 
@@ -134,4 +134,10 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UFUNCTION(BlueprintCallable) UStatsComponent* GetStatsComponent() const;
+
+	//True while interacting with an item that has an interaction time
+	bool IsInteracting() const;
+
+	//Gets the time until we interact with the current interactable
+	float GetRemainingInteractTime() const;
 };

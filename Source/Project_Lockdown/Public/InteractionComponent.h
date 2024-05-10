@@ -44,6 +44,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interaction")
 	bool bAllowMultipleUsers;
 
+	//Call this to change the name of the Interactable at runtime
+	UFUNCTION(BlueprintCallable, Category="Interaction")
+	void SetInteractableNameText(const FText& NewNameText);
+	
+	//Call this to change the action text of the Interactable at runtime
+	UFUNCTION(BlueprintCallable, Category="Interaction")
+	void SetInteractableActionText(const FText& NewActionText);
+	
 	//Delegates
 
 	//[local + server] Called when the player presses the interact key whilst focusing on this interactable actor
@@ -69,8 +77,22 @@ public:
 	//[local + server] Called when the player has interacted with the interactable actor for enough time
 	UPROPERTY(EditDefaultsOnly, BlueprintAssignable)
 	FOnInteract OnInteract;
+
+protected:
+	//Called at game start
+	virtual void Deactivate() override;
+
+	bool CanInteract(class ACustomCharacter* Character) const;
+
+	//On the server, this will hold all the interacting characters. On the client this will just hold the local character (Provided they are interacting with this object)
+	UPROPERTY()
+	TArray<class ACustomCharacter*> Interacting_Characters;
 	
 public:
+
+	//Called to refresh the interaction widget and its custom widgets
+	void RefreshWidget();
+	
 	//Called on the client when the player's interaction check trace begins or ends hitting this item
 	void BeginFocus(class ACustomCharacter* Character);
 	void EndFocus(class ACustomCharacter* Character);
@@ -80,4 +102,9 @@ public:
 	void EndInteract(class ACustomCharacter* Character);
 	
 	void Interact(class ACustomCharacter* Character);
+
+	//Return value from 0-1 denoting how far through the interaction the character is
+	//On the server this is the first interacting character's percentage, on client this is the local character's percentage
+	UFUNCTION(BlueprintPure, Category="Interaction")
+	float GetInteractionPercentage();
 };

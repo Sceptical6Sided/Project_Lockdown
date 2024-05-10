@@ -83,10 +83,21 @@ void ACustomCharacter::StopJumping()
 	bPressedCustomJump = false;
 }
 
-//Getter function for StatsComponent
+#pragma region Helper Functions
+
 UStatsComponent* ACustomCharacter::GetStatsComponent() const
 {
 	return Stats;
+}
+
+bool ACustomCharacter::IsInteracting() const
+{
+	return GetWorldTimerManager().IsTimerActive(TimerHandle_Interact);
+}
+
+float ACustomCharacter::GetRemainingInteractTime() const
+{
+	return GetWorldTimerManager().GetTimerRemaining(TimerHandle_Interact);
 }
 
 //Returns an array of QueryParams mainly used when doing traces for collisions
@@ -101,6 +112,8 @@ FCollisionQueryParams ACustomCharacter::GetIgnoreCharacterParams() const
 
 	return Params;
 }
+
+#pragma endregion
 
 #pragma region Interaction
 
@@ -148,20 +161,34 @@ void ACustomCharacter::PerformInteractionCheck()
 
 void ACustomCharacter::CantFindNewInteractable()
 {
-	if (InteractionData.ViewedInteractionComponent)
+	//Lost focus on an interactable so we clear the timer
+	if(GetWorldTimerManager().IsTimerActive(TimerHandle_Interact))
+		GetWorldTimerManager().ClearTimer(TimerHandle_Interact);
+
+	//Tell the interactable we've stopped focusing on it and clear the current interactable
+	if (UInteractionComponent* Interactable = GetInteractable())
 	{
-		InteractionData.ViewedInteractionComponent->SetHiddenInGame(true);
-		InteractionData.ViewedInteractionComponent = nullptr;
+		Interactable->EndFocus(this);
+
+		if (InteractionData.bInteractHeld)
+			EndInteract();
 	}
+
+	InteractionData.ViewedInteractionComponent = nullptr;
 }
 
 void ACustomCharacter::FoundNewInteractable(UInteractionComponent* Interactable)
 {
-	if(Interactable)
+	//Edge case, if the player started an interaction with one Interactable and focuses on a new Interactable
+	EndInteract();
+
+	if(UInteractionComponent* OldInteractable = GetInteractable())
 	{
-		Interactable->SetHiddenInGame(false);
-		InteractionData.ViewedInteractionComponent = Interactable;
+		OldInteractable->EndFocus(this);
 	}
+
+	InteractionData.ViewedInteractionComponent = Interactable;
+	Interactable ->BeginFocus(this);
 }
 
 void ACustomCharacter::BeginInteract()
@@ -233,8 +260,9 @@ void ACustomCharacter::BeginPlay()
 void ACustomCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	PerformInteractionCheck();
+	const bool bIsInteractingOnServer = (HasAuthority() && IsInteracting());
+	if ((!HasAuthority() || bIsInteractingOnServer) && GetWorld() -> TimeSince(InteractionData.LastInteractionCheckedTime) > InteractionCheckFrequency)
+		PerformInteractionCheck();
 }
 
 // Called to bind functionality to input
