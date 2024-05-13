@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class PROJECT_LOCKDOWN_API AArmorItem : public AItem
+class PROJECT_LOCKDOWN_API UArmorItem : public UItem
 {
 	GENERATED_BODY()
 	

@@ -17,7 +17,7 @@ enum EAmmoCalibre
 };
 
 UCLASS()
-class PROJECT_LOCKDOWN_API AAmmoItem : public AItem
+class PROJECT_LOCKDOWN_API UAmmoItem : public UItem
 {
 	GENERATED_BODY()
 	

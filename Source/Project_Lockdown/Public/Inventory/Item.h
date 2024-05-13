@@ -21,13 +21,13 @@ enum EItemType
 };
 
 UCLASS(Abstract, BlueprintType, Blueprintable)
-class PROJECT_LOCKDOWN_API AItem : public AActor
+class PROJECT_LOCKDOWN_API UItem : public UObject
 {
 	GENERATED_BODY()
 	
 public:
 
-	AItem();
+	UItem();
 
 	UPROPERTY(Transient) UWorld* World;
 

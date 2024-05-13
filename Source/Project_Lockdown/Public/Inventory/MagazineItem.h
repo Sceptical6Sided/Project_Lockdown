@@ -11,7 +11,7 @@
  * 
  */
 UCLASS()
-class PROJECT_LOCKDOWN_API AMagazineItem : public AItem
+class PROJECT_LOCKDOWN_API UMagazineItem : public UItem
 {
 	GENERATED_BODY()
 	

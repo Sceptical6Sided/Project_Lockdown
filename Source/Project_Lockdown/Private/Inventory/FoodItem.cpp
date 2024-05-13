@@ -4,13 +4,13 @@
 #include "Inventory/FoodItem.h"
 
 
-AFoodItem::AFoodItem()
+UFoodItem::UFoodItem()
 {
 	ItemType = IT_Food;
 	FoodType = FT_Dry;
 }
 
-void AFoodItem::Use(ACustomCharacter* Character)
+void UFoodItem::Use(ACustomCharacter* Character)
 {
 	if (Character)
 	{

@@ -16,12 +16,12 @@ enum WeaponType
 };
 
 UCLASS()
-class PROJECT_LOCKDOWN_API AWeaponItem : public AItem
+class PROJECT_LOCKDOWN_API UWeaponItem : public UItem
 {
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY(EditDefaultsOnly ,BlueprintReadOnly , Category = "Weapon Properties") class AMagazineItem* ActiveMagazine;
+	UPROPERTY(EditDefaultsOnly ,BlueprintReadOnly , Category = "Weapon Properties") class UMagazineItem* ActiveMagazine;
 
 	bool bIsBulletInChamber;
 };

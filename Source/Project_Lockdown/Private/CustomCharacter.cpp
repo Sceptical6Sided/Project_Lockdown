@@ -58,7 +58,7 @@ ACustomCharacter::ACustomCharacter(const FObjectInitializer& ObjectInitializer) 
 	Inventory->StatsComponent = Stats;
 }
 
-void ACustomCharacter::UseItem(AItem* Item)
+void ACustomCharacter::UseItem(UItem* Item)
 {
 	if (Item)
 	{

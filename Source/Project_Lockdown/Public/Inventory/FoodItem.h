@@ -18,13 +18,13 @@ enum EFoodType
 };
 
 UCLASS()
-class PROJECT_LOCKDOWN_API AFoodItem : public AItem
+class PROJECT_LOCKDOWN_API UFoodItem : public UItem
 {
 	GENERATED_BODY()
 
 public:
 
-	AFoodItem();
+	UFoodItem();
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Food Properties", meta = (ClampMin = 0.0)) float HealAmount;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Food Properties") TEnumAsByte<EFoodType> FoodType;

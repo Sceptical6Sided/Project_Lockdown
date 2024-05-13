@@ -81,7 +81,7 @@ public:
 	float Health = 100.f;
 	
 	UFUNCTION(BlueprintCallable, Category = "Items")
-	void UseItem(class AItem* Item);
+	void UseItem(class UItem* Item);
 	
 	virtual void Jump() override;
 	virtual void StopJumping() override;
