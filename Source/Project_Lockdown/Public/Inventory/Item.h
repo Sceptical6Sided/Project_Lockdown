@@ -6,7 +6,9 @@
 #include "CustomCharacter.h"
 #include "Item.generated.h"
 
-UENUM()
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnItemModified);
+
+UENUM(BlueprintType)
 enum EItemType
 {
 	It_Junk			UMETA(DisplayName = "Junk"),
@@ -77,6 +79,8 @@ public:
 
 	//Used to efficiently replicate inventory items
 	UPROPERTY() int32 RepKey;
+
+	UPROPERTY(BlueprintAssignable) FOnItemModified OnItemModified;
 
 	UFUNCTION()
 	void OnRep_Quantity();
