@@ -193,7 +193,10 @@ void ACustomCharacter::FoundNewInteractable(UInteractionComponent* Interactable)
 
 void ACustomCharacter::BeginInteract()
 {
-	if(!HasAuthority()) ServerBeginInteract();
+	if(!HasAuthority())
+	{
+		ServerBeginInteract();
+	}
 
 	InteractionData.bInteractHeld = true;
 
@@ -202,21 +205,30 @@ void ACustomCharacter::BeginInteract()
 		Interactable->BeginInteract(this);
 
 		if(FMath::IsNearlyZero(Interactable->InteractionTime))
+		{
 			Interact();
+		}
 		else
+		{
 			GetWorldTimerManager().SetTimer(TimerHandle_Interact, this, &ACustomCharacter::Interact, Interactable->InteractionTime, false);
+		}
 	}
 }
 
 void ACustomCharacter::EndInteract()
 {
-	if(!HasAuthority()) ServerEndInteract();
+	if(!HasAuthority())
+	{
+		ServerEndInteract();
+	}
 
 	InteractionData.bInteractHeld = false;
 
 	GetWorldTimerManager().ClearTimer(TimerHandle_Interact);
 	if (UInteractionComponent* Interactable = GetInteractable())
+	{
 		Interactable->EndInteract(this);
+	}
 }
 
 void ACustomCharacter::ServerBeginInteract_Implementation()

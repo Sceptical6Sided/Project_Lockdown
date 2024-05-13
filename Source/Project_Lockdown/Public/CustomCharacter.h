@@ -91,7 +91,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
+	
 	//The time between checking for an interactable in seconds (set to 0.f for every tick)
 	UPROPERTY(EditDefaultsOnly, Category="Interaction")
 	float InteractionCheckFrequency;
