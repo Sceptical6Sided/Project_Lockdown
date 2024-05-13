@@ -100,7 +100,8 @@ public:
 	//Called on the client when the player begins or ends the interaction with this item
 	void BeginInteract(class ACustomCharacter* Character);
 	void EndInteract(class ACustomCharacter* Character);
-	
+
+	//Fired when the actual interaction is called
 	void Interact(class ACustomCharacter* Character);
 
 	//Return value from 0-1 denoting how far through the interaction the character is
