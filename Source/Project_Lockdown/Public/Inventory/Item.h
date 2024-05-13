@@ -31,6 +31,11 @@ protected:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual bool IsSupportedForNetworking() const override;
+
+	//Preprocessor marking for the engine to only keep this code for dev builds not for shipped versions
+#if WITH_EDITOR
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
 	
 public:
 
@@ -84,8 +89,12 @@ public:
 
 	UFUNCTION()
 	void OnRep_Quantity();
+
+	UFUNCTION(BlueprintCallable, Category="Item") void SetQuantity(const int32 NewQuantity);
 	
 	virtual void Use(class ACustomCharacter* Character) PURE_VIRTUAL(UItem,);
+
+	virtual void AddedToInventory(class UInventoryComponent* Inventory);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnUse(ACustomCharacter* Character);
