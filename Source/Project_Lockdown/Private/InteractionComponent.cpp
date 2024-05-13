@@ -6,6 +6,13 @@
 #include "CustomCharacter.h"
 #include "Widgets/InteractionWidget.h"
 
+#if 1
+float MacroDuration = 2.f;
+#define SLOG(x,...) if(GEngine){GEngine->AddOnScreenDebugMessage(-1, MacroDuration ? MacroDuration : -1.f, FColor::Yellow, FString::Printf(TEXT(x), ##__VA_ARGS__));}
+#else
+#define SLOG(x,...)
+#endif
+
 UInteractionComponent::UInteractionComponent()
 {
 	SetComponentTickEnabled(false);
@@ -25,6 +32,71 @@ UInteractionComponent::UInteractionComponent()
 	SetHiddenInGame(true);
 }
 
+#pragma region Focus
+
+void UInteractionComponent::BeginFocus(ACustomCharacter* Character)
+{
+	if(!IsActive() || !GetOwner() || !Character)
+	{
+		return;
+	}
+
+	OnBeginFocus.Broadcast(Character);
+	
+	SetHiddenInGame(false);
+
+	RefreshWidget();
+}
+
+void UInteractionComponent::EndFocus(ACustomCharacter* Character)
+{
+	OnEndFocus.Broadcast(Character);
+	SetHiddenInGame(true);
+}
+#pragma endregion
+
+#pragma region Delegate Broadcasting
+
+void UInteractionComponent::BeginInteract(ACustomCharacter* Character)
+{
+	if(CanInteract(Character))
+	{
+		Interacting_Characters.AddUnique(Character);
+		OnBeginInteract.Broadcast(Character);
+	}
+}
+
+void UInteractionComponent::EndInteract(ACustomCharacter* Character)
+{
+	Interacting_Characters.RemoveSingle(Character);
+	OnEndInteract.Broadcast(Character);
+}
+
+void UInteractionComponent::Interact(ACustomCharacter* Character)
+{
+	if(CanInteract(Character))
+	{
+		OnInteract.Broadcast(Character);
+	}
+}
+
+#pragma endregion
+
+#pragma region Widget Interface
+
+void UInteractionComponent::RefreshWidget()
+{
+	if(!bHiddenInGame && GetOwner()->GetNetMode() != NM_DedicatedServer)
+	{
+		if (UInteractionWidget* InteractionWidget = Cast<UInteractionWidget>(GetUserWidgetObject()))
+			InteractionWidget->UpdateInteractionWidget(this);
+	}
+}
+
+#pragma endregion
+
+#pragma region Helper Functions
+
 void UInteractionComponent::SetInteractableNameText(const FText& NewNameText)
 {
 	InteractableNameText = NewNameText;
@@ -35,15 +107,6 @@ void UInteractionComponent::SetInteractableActionText(const FText& NewActionText
 {
 	InteractableActionText = NewActionText;
 	RefreshWidget();
-}
-
-void UInteractionComponent::RefreshWidget()
-{
-	if(!bHiddenInGame && GetOwner()->GetNetMode() != NM_DedicatedServer)
-	{
-		if (UInteractionWidget* InteractionWidget = Cast<UInteractionWidget>(GetUserWidgetObject()))
-			InteractionWidget->UpdateInteractionWidget(this);
-	}
 }
 
 float UInteractionComponent::GetInteractionPercentage()
@@ -81,47 +144,4 @@ bool UInteractionComponent::CanInteract(ACustomCharacter* Character) const
 	return !bPlayerAlreadyInteracting && IsActive() && GetOwner() != nullptr && Character != nullptr;
 }
 
-#pragma region Focus
-
-void UInteractionComponent::BeginFocus(ACustomCharacter* Character)
-{
-	if(!IsActive() || !GetOwner() || !Character)
-	{
-		return;
-	}
-
-	OnBeginFocus.Broadcast(Character);
-	
-	SetHiddenInGame(false);
-
-	RefreshWidget();
-}
-
-void UInteractionComponent::EndFocus(ACustomCharacter* Character)
-{
-	OnEndFocus.Broadcast(Character);
-	SetHiddenInGame(true);
-}
-
-void UInteractionComponent::BeginInteract(ACustomCharacter* Character)
-{
-	if(CanInteract(Character))
-	{
-		Interacting_Characters.AddUnique(Character);
-		OnBeginInteract.Broadcast(Character);
-	}
-}
-
-void UInteractionComponent::EndInteract(ACustomCharacter* Character)
-{
-	Interacting_Characters.RemoveSingle(Character);
-	OnEndInteract.Broadcast(Character);
-}
-
-void UInteractionComponent::Interact(ACustomCharacter* Character)
-{
-	if(CanInteract(Character))
-		OnInteract.Broadcast(Character);
-}
-
-#pragma endregion 
+#pragma endregion
