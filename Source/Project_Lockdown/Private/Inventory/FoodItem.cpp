@@ -6,7 +6,7 @@
 
 UFoodItem::UFoodItem()
 {
-	ItemType = IT_Food;
+	ItemType = It_Food;
 	FoodType = FT_Dry;
 }
 
