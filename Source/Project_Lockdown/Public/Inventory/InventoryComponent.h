@@ -22,6 +22,15 @@ public:
 	
 	UPROPERTY(Transient) UStatsComponent* StatsComponent;
 
+	UFUNCTION(BlueprintPure, Category = "Inventory")
+	FORCEINLINE float GetWeightCapacity() const {return WeightCapacity;}
+
+	UFUNCTION(BlueprintPure, Category = "Inventory")
+	FORCEINLINE int32 GetCapacity() const {return Capacity;}
+
+	UFUNCTION(BlueprintPure, Category = "Inventory")
+	FORCEINLINE TArray<class UItem*> GetItems() const {return Items;}
+
 protected:
 	
 	UPROPERTY(EditDefaultsOnly, Instanced) TArray<class UItem*> DefaultItems;
