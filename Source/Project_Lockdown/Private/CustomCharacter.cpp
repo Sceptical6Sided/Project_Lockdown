@@ -52,7 +52,6 @@ ACustomCharacter::ACustomCharacter(const FObjectInitializer& ObjectInitializer) 
 	InteractionCheckFrequency = 0.f;
 
 	Inventory = CreateDefaultSubobject<UInventoryComponent>("Inventory");
-	Inventory->Capacity = 20;
 	
 	Stats = CreateDefaultSubobject<UStatsComponent>("Stats");
 	Inventory->StatsComponent = Stats;

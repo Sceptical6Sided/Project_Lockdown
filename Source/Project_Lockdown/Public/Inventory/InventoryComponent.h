@@ -19,14 +19,13 @@ class PROJECT_LOCKDOWN_API UInventoryComponent : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UInventoryComponent();
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory") int32 Capacity;
-	UPROPERTY(Transient) UStatsComponent* StatsComponent;
 	
+	UPROPERTY(Transient) UStatsComponent* StatsComponent;
+
 protected:
 	
 	UPROPERTY(EditDefaultsOnly, Instanced) TArray<class UItem*> DefaultItems;
-
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory") int32 Capacity;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory") float WeightCapacity;
 	UPROPERTY(BlueprintAssignable, Category = "Inventory") FOnInventoryUpdated OnInventoryUpdated;
 	UPROPERTY(ReplicatedUsing = OnRep_Items ,VisibleAnywhere, BlueprintReadOnly, Category = "Inventory") TArray<class UItem*> Items;
