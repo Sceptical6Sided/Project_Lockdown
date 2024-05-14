@@ -91,6 +91,8 @@ public:
 	void OnRep_Quantity();
 
 	UFUNCTION(BlueprintCallable, Category="Item") void SetQuantity(const int32 NewQuantity);
+
+	UFUNCTION(BlueprintCallable, Category="Item") FORCEINLINE int32 GetQuantity() const {return Quantity;}
 	
 	virtual void Use(class ACustomCharacter* Character) PURE_VIRTUAL(UItem,);
 
