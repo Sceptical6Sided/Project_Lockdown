@@ -14,7 +14,6 @@ UInventoryComponent::UInventoryComponent()
 	Capacity = 20;
 }
 
-
 void UInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -40,47 +39,178 @@ bool UInventoryComponent::ReplicateSubobjects(UActorChannel* Channel, FOutBunch*
 	return bWroteSomething;
 }
 
-// Called when the game starts
-void UInventoryComponent::BeginPlay()
+void UInventoryComponent::ClientRefreshInventory_Implementation()
 {
-	Super::BeginPlay();
-
-	for (auto& Item : DefaultItems)
-	{
-		AddItem(Item);
-	}
-	
+	OnInventoryUpdated.Broadcast();	
 }
 
-bool UInventoryComponent::AddItem(UItem* Item)
+UItem* UInventoryComponent::AddItem(UItem* Item)
 {
-	if (Items.Num() >= Capacity || !Item) return false;
-	Item->OwningInventory = this;
-	Item->World = GetWorld();
-	Items.Add(Item);
-	StatsComponent->Weight += Item->Weight;
+	if(GetOwner() && GetOwner()->HasAuthority())
+	{
+		UItem* NewItem = NewObject<UItem>(GetOwner(), Item->GetClass());
+		NewItem->SetQuantity(Item->Quantity);
+		NewItem->OwningInventory = this;
+		NewItem->AddedToInventory(this);
+		Items.Add(NewItem);
+		NewItem->MarkDirtyForReplication();
 
-	//Call delegate to update UI
-	OnInventoryUpdated.Broadcast();
-
-	return true;
+		return NewItem;
+	}
+	return nullptr;
 }
 
 bool UInventoryComponent::RemoveItem(UItem* Item)
 {
-	if (Item)
+	if (GetOwner() && GetOwner()->HasAuthority())
 	{
-		Item->OwningInventory = nullptr;
-		Item->World = nullptr;
-		Items.RemoveSingle(Item);
-		StatsComponent->Weight -= Item->Weight;
-		OnInventoryUpdated.Broadcast();
-		return true;
+		if (Item)
+		{
+			Items.RemoveSingle(Item);
+
+			ReplicatedItemsKey++;
+			return true;
+		}
 	}
 	return false;
 }
 
-void UInventoryComponent::OnRep_Items()
+float UInventoryComponent::GetCurrentWeight() const
 {
+	float Weight = 0.f;
+
+	for (auto& Item : Items)
+	{
+		if (Item)
+		{
+			Weight += Item->GetStackWeight();
+		}
+	}
+	
+	return Weight;
 }
 
+void UInventoryComponent::SetWeightCapacity(const float NewWeightCapacity)
+{
+	WeightCapacity = NewWeightCapacity;
+	OnInventoryUpdated.Broadcast();
+}
+
+void UInventoryComponent::SetCapacity(const int32 NewCapacity)
+{
+	Capacity = NewCapacity;
+	OnInventoryUpdated.Broadcast();
+}
+
+bool UInventoryComponent::HasItem(TSubclassOf<UItem> ItemClass, const int32 Quantity) const
+{
+	if (UItem* ItemToFind = FindItemByClass(ItemClass))
+	{
+		return ItemToFind->GetQuantity() >= Quantity;
+	}
+	return false;
+}
+
+UItem* UInventoryComponent::FindItem(UItem* Item) const
+{
+	if (Item)
+	{
+		for (auto& InvItem : Items)
+		{
+			if (InvItem && InvItem->GetClass() == Item->GetClass())
+			{
+				return InvItem;
+			}
+		}
+	}
+	return nullptr;
+}
+
+UItem* UInventoryComponent::FindItemByClass(TSubclassOf<UItem> ItemClass) const
+{
+	for (auto& InvItem : Items)
+	{
+		if (InvItem && InvItem->GetClass() == ItemClass)
+		{
+			return InvItem;
+		}
+	}
+	return nullptr;
+}
+
+TArray<UItem*> UInventoryComponent::FindItemsByClass(TSubclassOf<UItem> ItemClass) const
+{
+	TArray<UItem*> ItemsOfClass;
+
+	for (auto& InvItem : Items)
+	{
+		if (InvItem && InvItem->GetClass()->IsChildOf(ItemClass))
+		{
+			ItemsOfClass.Add(InvItem);
+		}
+	}
+	
+	return ItemsOfClass;
+}
+
+void UInventoryComponent::OnRep_Items()
+{
+	OnInventoryUpdated.Broadcast();
+}
+
+#pragma region Adding Items
+
+FItemAddResult UInventoryComponent::TryAddItem(UItem* Item)
+{
+	return TryAddItem_Internal(Item);
+}
+
+FItemAddResult UInventoryComponent::TryAddItemFromClass(TSubclassOf<UItem> ItemClass, const int32 Quantity)
+{
+	UItem* Item = NewObject<UItem>(GetOwner(), ItemClass);
+	Item->SetQuantity(Quantity);
+	return TryAddItem_Internal(Item);
+}
+
+int32 UInventoryComponent::ConsumeItem(UItem* Item)
+{
+	if(Item)
+	{
+		ConsumeItem(Item, Item->GetQuantity());
+	}
+	return 0;
+}
+
+int32 UInventoryComponent::ConsumeItem(UItem* Item, const int32 Quantity)
+{
+	if(GetOwner() && GetOwner()->HasAuthority() && Item)
+	{
+		const int32 RemoveQuantity = FMath::Min(Quantity, Item->GetQuantity());
+
+		//Engine Boilerplate so we make sure that we don't have negative items after we consume 
+		ensure(!(Item->GetQuantity()-RemoveQuantity < 0));
+
+		Item->SetQuantity(Item->GetQuantity() - RemoveQuantity);
+
+		if(Item->GetQuantity() <= 0)
+		{
+			RemoveItem(Item);
+		}
+		else
+		{
+			ClientRefreshInventory();
+		}
+
+		return RemoveQuantity;
+	}
+
+	return 0;
+}
+
+FItemAddResult UInventoryComponent::TryAddItem_Internal(UItem* Item)
+{
+	AddItem(Item);
+	return FItemAddResult::AddedAll(Item->Quantity);
+}
+
+#pragma endregion
