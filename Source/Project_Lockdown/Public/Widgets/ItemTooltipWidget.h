@@ -14,4 +14,7 @@ class PROJECT_LOCKDOWN_API UItemTooltipWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
+public:
+	UPROPERTY(BlueprintReadOnly, Category = "Tooltip", meta = (ExposeOnSpawn = true))
+	class UInventoryItemWidget* InventoryItemWidget;
 };
