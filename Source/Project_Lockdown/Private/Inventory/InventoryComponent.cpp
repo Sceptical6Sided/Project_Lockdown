@@ -3,7 +3,9 @@
 
 #include "Inventory/InventoryComponent.h"
 
+#include "Engine/ActorChannel.h"
 #include "Inventory/Item.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
@@ -12,6 +14,31 @@ UInventoryComponent::UInventoryComponent()
 	Capacity = 20;
 }
 
+
+void UInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(UInventoryComponent, Items);
+}
+
+bool UInventoryComponent::ReplicateSubobjects(UActorChannel* Channel, FOutBunch* Bunch, FReplicationFlags* RepFlags)
+{
+	bool bWroteSomething = Super::ReplicateSubobjects(Channel, Bunch, RepFlags);
+
+	if (Channel->KeyNeedsToReplicate(0, ReplicatedItemsKey))
+	{
+		for (auto& Item: Items)
+		{
+			if (Channel->KeyNeedsToReplicate(Item->GetUniqueID(), Item->RepKey))
+			{
+				bWroteSomething |= Channel -> ReplicateSubobject(Item, *Bunch, *RepFlags);
+			}
+		}
+	}
+
+	return bWroteSomething;
+}
 
 // Called when the game starts
 void UInventoryComponent::BeginPlay()
@@ -51,5 +78,9 @@ bool UInventoryComponent::RemoveItem(UItem* Item)
 		return true;
 	}
 	return false;
+}
+
+void UInventoryComponent::OnRep_Items()
+{
 }
 
