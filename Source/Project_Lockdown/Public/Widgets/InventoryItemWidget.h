@@ -13,5 +13,8 @@ UCLASS()
 class PROJECT_LOCKDOWN_API UInventoryItemWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
+
+public:
+	UPROPERTY(BlueprintReadOnly, Category = "Inventory Item Widget", meta = (ExposeOnSpawn = true))
+	class UItem* Item;
 };
