@@ -44,22 +44,6 @@ void UInventoryComponent::ClientRefreshInventory_Implementation()
 	OnInventoryUpdated.Broadcast();	
 }
 
-UItem* UInventoryComponent::AddItem(UItem* Item)
-{
-	if(GetOwner() && GetOwner()->HasAuthority())
-	{
-		UItem* NewItem = NewObject<UItem>(GetOwner(), Item->GetClass());
-		NewItem->SetQuantity(Item->Quantity);
-		NewItem->OwningInventory = this;
-		NewItem->AddedToInventory(this);
-		Items.Add(NewItem);
-		NewItem->MarkDirtyForReplication();
-
-		return NewItem;
-	}
-	return nullptr;
-}
-
 bool UInventoryComponent::RemoveItem(UItem* Item)
 {
 	if (GetOwner() && GetOwner()->HasAuthority())
@@ -158,20 +142,6 @@ void UInventoryComponent::OnRep_Items()
 	OnInventoryUpdated.Broadcast();
 }
 
-#pragma region Adding Items
-
-FItemAddResult UInventoryComponent::TryAddItem(UItem* Item)
-{
-	return TryAddItem_Internal(Item);
-}
-
-FItemAddResult UInventoryComponent::TryAddItemFromClass(TSubclassOf<UItem> ItemClass, const int32 Quantity)
-{
-	UItem* Item = NewObject<UItem>(GetOwner(), ItemClass);
-	Item->SetQuantity(Quantity);
-	return TryAddItem_Internal(Item);
-}
-
 int32 UInventoryComponent::ConsumeItem(UItem* Item)
 {
 	if(Item)
@@ -207,10 +177,40 @@ int32 UInventoryComponent::ConsumeItem(UItem* Item, const int32 Quantity)
 	return 0;
 }
 
+#pragma region Adding Items
+
+FItemAddResult UInventoryComponent::TryAddItem(UItem* Item)
+{
+	return TryAddItem_Internal(Item);
+}
+
+FItemAddResult UInventoryComponent::TryAddItemFromClass(TSubclassOf<UItem> ItemClass, const int32 Quantity)
+{
+	UItem* Item = NewObject<UItem>(GetOwner(), ItemClass);
+	Item->SetQuantity(Quantity);
+	return TryAddItem_Internal(Item);
+}
+
 FItemAddResult UInventoryComponent::TryAddItem_Internal(UItem* Item)
 {
 	AddItem(Item);
 	return FItemAddResult::AddedAll(Item->Quantity);
+}
+
+UItem* UInventoryComponent::AddItem(UItem* Item)
+{
+	if(GetOwner() && GetOwner()->HasAuthority())
+	{
+		UItem* NewItem = NewObject<UItem>(GetOwner(), Item->GetClass());
+		NewItem->SetQuantity(Item->Quantity);
+		NewItem->OwningInventory = this;
+		NewItem->AddedToInventory(this);
+		Items.Add(NewItem);
+		NewItem->MarkDirtyForReplication();
+
+		return NewItem;
+	}
+	return nullptr;
 }
 
 #pragma endregion
