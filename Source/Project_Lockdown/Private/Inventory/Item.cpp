@@ -3,6 +3,7 @@
 
 #include "Inventory/Item.h"
 
+#include "Inventory/InventoryComponent.h"
 #include "Net/UnrealNetwork.h"
 
 #define LOCTEXT_NAMESPACE "Item"
@@ -73,7 +74,14 @@ bool UItem::ShouldShowInInventory() const
 
 void UItem::MarkDirtyForReplication()
 {
-	
+	//Mark this object for replication
+	++RepKey;
+
+	//Mark the array for replication
+	if (OwningInventory)
+	{
+		++OwningInventory->ReplicatedItemsKey;
+	}
 }
 
 #undef LOCTEXT_NAMESPACE
