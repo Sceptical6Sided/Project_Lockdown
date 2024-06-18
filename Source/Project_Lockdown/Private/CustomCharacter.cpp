@@ -199,6 +199,11 @@ void ACustomCharacter::BeginInteract()
 		ServerBeginInteract();
 	}
 
+	if(HasAuthority())
+	{
+		PerformInteractionCheck();
+	}
+	
 	InteractionData.bInteractHeld = true;
 
 	if (UInteractionComponent* Interactable = GetInteractable())
