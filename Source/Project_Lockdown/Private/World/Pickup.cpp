@@ -40,6 +40,13 @@ bool APickup::ReplicateSubobjects(UActorChannel* Channel, FOutBunch* Bunch, FRep
 	return bWroteSomething;
 }
 
+#if WITH_EDITOR
+void APickup::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+}
+#endif
+
 // Called every frame
 void APickup::Tick(float DeltaTime)
 {
