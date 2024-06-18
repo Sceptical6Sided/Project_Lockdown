@@ -48,10 +48,12 @@ ACustomCharacter::ACustomCharacter(const FObjectInitializer& ObjectInitializer) 
 	BackpackMesh = CreateDefaultSubobject<USkeletalMeshComponent>("BackpackMesh");
 	BackpackMesh->SetupAttachment(GetMesh());
 
-	InteractionCheckDistance = 1000.f;
-	InteractionCheckFrequency = 0.f;
-
 	Inventory = CreateDefaultSubobject<UInventoryComponent>("Inventory");
+	Inventory->SetCapacity(20);
+	Inventory->SetWeightCapacity(80.f);
+
+	InteractionCheckFrequency = 0.f;
+	InteractionCheckDistance = 1000.f;
 	
 	Stats = CreateDefaultSubobject<UStatsComponent>("Stats");
 	Inventory->StatsComponent = Stats;
