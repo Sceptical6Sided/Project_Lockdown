@@ -11,7 +11,19 @@
 // Sets default values
 APickup::APickup()
 {
+	PickupMesh = CreateDefaultSubobject<UStaticMeshComponent>("PickupMesh");
+	PickupMesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+	SetRootComponent(PickupMesh);
 	
+	InteractionComponent = CreateDefaultSubobject<UInteractionComponent>("PickupInteractionComponent");
+	InteractionComponent->InteractionTime = 0.5f;
+	InteractionComponent->InteractionDistance = 200.f;
+	InteractionComponent->InteractableNameText = FText::FromString("Pickup");
+	InteractionComponent->InteractableActionText = FText::FromString("Take");
+	InteractionComponent->OnInteract.AddDynamic(this, &APickup::APickup::OnTakePickup);
+	InteractionComponent->SetupAttachment(PickupMesh);
+
+	SetReplicates(true);
 }
 
 void APickup::InitializePickup(const TSubclassOf<UItem> ItemClass, const int32 Quantity)
