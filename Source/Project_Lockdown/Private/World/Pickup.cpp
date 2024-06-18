@@ -9,6 +9,19 @@
 #include "Inventory/InventoryComponent.h"
 #include "Inventory/Item.h"
 
+#if 0
+float MacroDuration = 2.f;
+#define SLOG(x,...) if(GEngine){GEngine->AddOnScreenDebugMessage(-1, MacroDuration ? MacroDuration : -1.f, FColor::Yellow, FString::Printf(TEXT(x), ##__VA_ARGS__));}
+#define POINT(x, c) DrawDebugPoint(GetWorld(), x, 10, c, !MacroDuration, MacroDuration);
+#define LINE(x1, x2, c) DrawDebugLine(GetWorld(), x1, x2, c, !MacroDuration, MacroDuration);
+#define CAPSULE(x, c) DrawDebugCapsule(GetWorld(), x, CapHalfHeight(), CapRadius(), FQuat::Identity, c, !MacroDuration, MacroDuration);
+#else
+#define SLOG(x,...)
+#define POINT(x, c)x
+#define LINE(x1, x2, c)
+#define CAPSULE(x, c)
+#endif
+
 // Sets default values
 APickup::APickup()
 {
@@ -21,7 +34,7 @@ APickup::APickup()
 	InteractionComponent->InteractionDistance = 200.f;
 	InteractionComponent->InteractableNameText = FText::FromString("Pickup");
 	InteractionComponent->InteractableActionText = FText::FromString("Take");
-	InteractionComponent->OnInteract.AddDynamic(this, &APickup::APickup::OnTakePickup);
+	InteractionComponent->OnInteract.AddDynamic(this, &APickup::OnTakePickup);
 	InteractionComponent->SetupAttachment(PickupMesh);
 
 	SetReplicates(true);
@@ -129,16 +142,20 @@ void APickup::OnTakePickup(ACustomCharacter* Taker)
 	//Check authority and item validity, also check PendingKillPending to prevent players taking a pickup that was already taken but the memory space was still occupied for it for some reason
 	if(HasAuthority() && !IsPendingKillPending() && Item)
 	{
+		SLOG("Check is done, checking for valid inventory")
 		if(UInventoryComponent* PlayerInventory = Taker->Inventory)
 		{
+			SLOG("Inventory is valid, trying to add item")
 			const FItemAddResult AddResult = PlayerInventory->TryAddItem(Item);
 			
 			if(AddResult.ActualAmountGiven < Item->GetQuantity())
 			{
+				SLOG("Items left, adding given number to inventory")
 				Item->SetQuantity(Item->GetQuantity() - AddResult.ActualAmountGiven);
 			}
 			else if (AddResult.ActualAmountGiven >= Item->GetQuantity())
 			{
+				SLOG("No more items left, destroying pickup")
 				Destroy();
 			}
 		}
