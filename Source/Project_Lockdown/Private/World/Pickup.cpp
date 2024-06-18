@@ -2,6 +2,8 @@
 
 
 #include "World/Pickup.h"
+
+#include "InteractionComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "Engine/ActorChannel.h"
 #include "Inventory/Item.h"
@@ -9,9 +11,7 @@
 // Sets default values
 APickup::APickup()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
+	
 }
 
 void APickup::InitializePickup(const TSubclassOf<UItem> ItemClass, const int32 Quantity)
@@ -23,6 +23,29 @@ void APickup::InitializePickup(const TSubclassOf<UItem> ItemClass, const int32 Q
 
 		OnRep_Item();
 		Item->MarkDirtyForReplication();
+	}
+}
+
+void APickup::OnRep_Item()
+{
+	if(Item)
+	{
+		PickupMesh->SetStaticMesh(Item->PickUpMesh);
+		InteractionComponent->InteractableNameText = Item->ItemDisplayName;
+
+		//Clients bind to this delegate on order to refresh the interaction widget if quantity changed
+		Item->OnItemModified.AddDynamic(this, &APickup::OnItemModified);
+	}
+
+	//If replicated properties changed,then refresh the widget
+	InteractionComponent->RefreshWidget();
+}
+
+void APickup::OnItemModified()
+{
+	if(InteractionComponent)
+	{
+		InteractionComponent->RefreshWidget();
 	}
 }
 
@@ -72,5 +95,12 @@ bool APickup::ReplicateSubobjects(UActorChannel* Channel, FOutBunch* Bunch, FRep
 void APickup::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
+
+	FName PropertyName = (PropertyChangedEvent.Property != NULL) ? PropertyChangedEvent.Property->GetFName() : NAME_None;
+
+	if(PropertyName == GET_MEMBER_NAME_CHECKED(APickup, ItemTemplate))
+	{
+		PickupMesh->SetStaticMesh(ItemTemplate->PickUpMesh);
+	}
 }
 #endif
