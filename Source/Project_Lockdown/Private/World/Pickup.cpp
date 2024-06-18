@@ -30,7 +30,7 @@ APickup::APickup()
 	SetRootComponent(PickupMesh);
 	
 	InteractionComponent = CreateDefaultSubobject<UInteractionComponent>("PickupInteractionComponent");
-	InteractionComponent->InteractionTime = 0.5f;
+	InteractionComponent->InteractionTime = 0.f;
 	InteractionComponent->InteractionDistance = 200.f;
 	InteractionComponent->InteractableNameText = FText::FromString("Pickup");
 	InteractionComponent->InteractableActionText = FText::FromString("Take");
@@ -140,7 +140,7 @@ void APickup::OnTakePickup(ACustomCharacter* Taker)
 	}
 
 	//Check authority and item validity, also check PendingKillPending to prevent players taking a pickup that was already taken but the memory space was still occupied for it for some reason
-	if(HasAuthority() && !IsPendingKillPending() && Item)
+	if(HasAuthority() /*&& !IsPendingKillPending()*/ && Item)
 	{
 		SLOG("Check is done, checking for valid inventory")
 		if(UInventoryComponent* PlayerInventory = Taker->Inventory)
