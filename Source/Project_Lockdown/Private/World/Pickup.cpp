@@ -6,6 +6,7 @@
 #include "InteractionComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "Engine/ActorChannel.h"
+#include "Inventory/InventoryComponent.h"
 #include "Inventory/Item.h"
 
 // Sets default values
@@ -116,3 +117,30 @@ void APickup::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent
 	}
 }
 #endif
+
+void APickup::OnTakePickup(ACustomCharacter* Taker)
+{
+	if (!Taker)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Pickup OnTakePickup was called but the player was not a valid Character."));
+		return;
+	}
+
+	//Check authority and item validity, also check PendingKillPending to prevent players taking a pickup that was already taken but the memory space was still occupied for it for some reason
+	if(HasAuthority() && !IsPendingKillPending() && Item)
+	{
+		if(UInventoryComponent* PlayerInventory = Taker->Inventory)
+		{
+			const FItemAddResult AddResult = PlayerInventory->TryAddItem(Item);
+			
+			if(AddResult.ActualAmountGiven < Item->GetQuantity())
+			{
+				Item->SetQuantity(Item->GetQuantity() - AddResult.ActualAmountGiven);
+			}
+			else if (AddResult.ActualAmountGiven >= Item->GetQuantity())
+			{
+				Destroy();
+			}
+		}
+	}
+}
