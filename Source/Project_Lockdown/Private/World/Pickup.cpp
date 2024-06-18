@@ -14,6 +14,18 @@ APickup::APickup()
 
 }
 
+void APickup::InitializePickup(const TSubclassOf<UItem> ItemClass, const int32 Quantity)
+{
+	if (HasAuthority() && ItemClass && Quantity > 0)
+	{
+		Item = NewObject<UItem>(this, ItemClass);
+		Item->SetQuantity(Quantity);
+
+		OnRep_Item();
+		Item->MarkDirtyForReplication();
+	}
+}
+
 // Called when the game starts or when spawned
 void APickup::BeginPlay()
 {
@@ -22,7 +34,7 @@ void APickup::BeginPlay()
 	//Check if the pickup is loaded from the map file directly and not spawned in at runtime
 	if(HasAuthority() && ItemTemplate && bNetStartup)
 	{
-		InitilizePickup(ItemTemplate->GetClass(), ItemTemplate->GetQuantity());
+		InitializePickup(ItemTemplate->GetClass(), ItemTemplate->GetQuantity());
 	}
 
 	//If the pickup was spawned in at runtime align it with the ground
@@ -62,11 +74,3 @@ void APickup::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 }
 #endif
-
-// Called every frame
-void APickup::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
