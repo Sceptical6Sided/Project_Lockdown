@@ -16,7 +16,7 @@ public:
 	APickup();
 
 	//Takes the item and creates a pickup for it (done on BeginPlay when a player drops an item on the ground)
-	void InitilizePickup(const TSubclassOf<class UItem> ItemClass, const int32 Quantity);
+	void InitializePickup(const TSubclassOf<class UItem> ItemClass, const int32 Quantity);
 
 	//Align pickup objects rotation with ground rotation
 	UFUNCTION(BlueprintImplementableEvent)
