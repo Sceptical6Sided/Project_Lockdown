@@ -16,8 +16,19 @@ public:
 	APickup();
 
 protected:
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, ReplicatedUsing = OnRep_Item)
+	class UItem* Item;
+
+	UFUNCTION()
+	void OnRep_Item();
+
+	UFUNCTION()
+	void OnItemModified();
+	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual bool ReplicateSubobjects(UActorChannel* Channel, FOutBunch* Bunch, FReplicationFlags* RepFlags) override;
 
 public:	
 	// Called every frame

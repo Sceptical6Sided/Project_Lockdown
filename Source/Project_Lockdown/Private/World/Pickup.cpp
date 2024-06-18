@@ -2,6 +2,9 @@
 
 
 #include "World/Pickup.h"
+#include "Net/UnrealNetwork.h"
+#include "Engine/ActorChannel.h"
+#include "Inventory/Item.h"
 
 // Sets default values
 APickup::APickup()
@@ -16,6 +19,25 @@ void APickup::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+void APickup::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(APickup, Item);
+}
+
+bool APickup::ReplicateSubobjects(UActorChannel* Channel, FOutBunch* Bunch, FReplicationFlags* RepFlags)
+{
+	bool bWroteSomething = Super::ReplicateSubobjects(Channel, Bunch, RepFlags);
+
+	if (Item && Channel->KeyNeedsToReplicate(Item->GetUniqueID(), Item->RepKey))
+	{
+		bWroteSomething |= Channel-> ReplicateSubobject(Item, *Bunch, *RepFlags);
+	}
+	
+	return bWroteSomething;
 }
 
 // Called every frame
