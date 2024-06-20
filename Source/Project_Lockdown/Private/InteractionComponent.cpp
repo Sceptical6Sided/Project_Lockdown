@@ -54,7 +54,10 @@ void UInteractionComponent::BeginFocus(ACustomCharacter* Character)
 void UInteractionComponent::EndFocus(ACustomCharacter* Character)
 {
 	OnEndFocus.Broadcast(Character);
-	SetHiddenInGame(true);
+	if(GetNetMode() != NM_DedicatedServer)
+	{
+		SetHiddenInGame(true);	
+	}
 }
 #pragma endregion
 
