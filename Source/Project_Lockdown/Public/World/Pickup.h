@@ -6,7 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Pickup.generated.h"
 
-UCLASS()
+UCLASS(ClassGroup = (Items), Blueprintable, Abstract)
 class PROJECT_LOCKDOWN_API APickup : public AActor
 {
 	GENERATED_BODY()

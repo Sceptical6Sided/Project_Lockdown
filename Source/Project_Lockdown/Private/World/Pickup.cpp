@@ -3,30 +3,20 @@
 
 #include "World/Pickup.h"
 
-#include "InteractionComponent.h"
-#include "Net/UnrealNetwork.h"
-#include "Engine/ActorChannel.h"
-#include "Inventory/InventoryComponent.h"
 #include "Inventory/Item.h"
-
-#if 0
-float MacroDuration = 2.f;
-#define SLOG(x,...) if(GEngine){GEngine->AddOnScreenDebugMessage(-1, MacroDuration ? MacroDuration : -1.f, FColor::Yellow, FString::Printf(TEXT(x), ##__VA_ARGS__));}
-#define POINT(x, c) DrawDebugPoint(GetWorld(), x, 10, c, !MacroDuration, MacroDuration);
-#define LINE(x1, x2, c) DrawDebugLine(GetWorld(), x1, x2, c, !MacroDuration, MacroDuration);
-#define CAPSULE(x, c) DrawDebugCapsule(GetWorld(), x, CapHalfHeight(), CapRadius(), FQuat::Identity, c, !MacroDuration, MacroDuration);
-#else
-#define SLOG(x,...)
-#define POINT(x, c)x
-#define LINE(x1, x2, c)
-#define CAPSULE(x, c)
-#endif
+#include "Net/UnrealNetwork.h"
+#include "CustomCharacter.h"
+#include "Components/StaticMeshComponent.h"
+#include "InteractionComponent.h"
+#include "Inventory/InventoryComponent.h"
+#include "Engine/ActorChannel.h"
 
 // Sets default values
 APickup::APickup()
 {
 	PickupMesh = CreateDefaultSubobject<UStaticMeshComponent>("PickupMesh");
 	PickupMesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+	
 	SetRootComponent(PickupMesh);
 	
 	InteractionComponent = CreateDefaultSubobject<UInteractionComponent>("PickupInteractionComponent");
@@ -48,6 +38,7 @@ void APickup::InitializePickup(const TSubclassOf<UItem> ItemClass, const int32 Q
 		Item->SetQuantity(Quantity);
 
 		OnRep_Item();
+		
 		Item->MarkDirtyForReplication();
 	}
 }
@@ -59,7 +50,7 @@ void APickup::OnRep_Item()
 		PickupMesh->SetStaticMesh(Item->PickUpMesh);
 		InteractionComponent->InteractableNameText = Item->ItemDisplayName;
 
-		//Clients bind to this delegate on order to refresh the interaction widget if quantity changed
+		//Clients bind to this delegate in order to refresh the interaction widget if quantity changed
 		Item->OnItemModified.AddDynamic(this, &APickup::OnItemModified);
 	}
 
@@ -122,11 +113,15 @@ void APickup::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 
-	FName PropertyName = (PropertyChangedEvent.Property != NULL) ? PropertyChangedEvent.Property->GetFName() : NAME_None;
+	FName PropertyName = (PropertyChangedEvent.Property != nullptr) ? PropertyChangedEvent.Property->GetFName() : NAME_None;
 
+	//If a new mesh is set in the editor, change the mesh to reflect the change
 	if(PropertyName == GET_MEMBER_NAME_CHECKED(APickup, ItemTemplate))
 	{
-		PickupMesh->SetStaticMesh(ItemTemplate->PickUpMesh);
+		if(ItemTemplate)
+		{
+			PickupMesh->SetStaticMesh(ItemTemplate->PickUpMesh);	
+		}
 	}
 }
 #endif
@@ -139,23 +134,19 @@ void APickup::OnTakePickup(ACustomCharacter* Taker)
 		return;
 	}
 
-	//Check authority and item validity, also check PendingKillPending to prevent players taking a pickup that was already taken but the memory space was still occupied for it for some reason
-	if(HasAuthority() /*&& !IsPendingKillPending()*/ && Item)
+	//Check PendingKillPending to prevent players taking a pickup that was already taken but the memory space was still occupied for it for some reason
+	if(HasAuthority() && !IsPendingKillPending() && Item)
 	{
-		SLOG("Check is done, checking for valid inventory")
-		if(UInventoryComponent* PlayerInventory = Taker->Inventory)
+		if(UInventoryComponent* Inventory = Taker->Inventory)
 		{
-			SLOG("Inventory is valid, trying to add item")
-			const FItemAddResult AddResult = PlayerInventory->TryAddItem(Item);
-			
+			const FItemAddResult AddResult = Inventory->TryAddItem(Item);
+
 			if(AddResult.ActualAmountGiven < Item->GetQuantity())
 			{
-				SLOG("Items left, adding given number to inventory")
-				Item->SetQuantity(Item->GetQuantity() - AddResult.ActualAmountGiven);
+				Item->SetQuantity(Item->GetQuantity()-AddResult.ActualAmountGiven);
 			}
 			else if (AddResult.ActualAmountGiven >= Item->GetQuantity())
 			{
-				SLOG("No more items left, destroying pickup")
 				Destroy();
 			}
 		}
