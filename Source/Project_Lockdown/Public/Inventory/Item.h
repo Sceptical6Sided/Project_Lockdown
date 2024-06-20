@@ -93,6 +93,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Item") void SetQuantity(const int32 NewQuantity);
 
 	UFUNCTION(BlueprintCallable, Category="Item") FORCEINLINE int32 GetQuantity() const {return Quantity;}
+
+	UFUNCTION(Blueprintable, Category="Item")
+	FORCEINLINE bool IsStackFull() const { return Quantity >= MaxStackSize; }
 	
 	virtual void Use(class ACustomCharacter* Character) PURE_VIRTUAL(UItem,);
 
