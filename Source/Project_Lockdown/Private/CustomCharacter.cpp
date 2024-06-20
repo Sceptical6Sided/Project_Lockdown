@@ -1,10 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "CustomCharacter.h"
+#include "Net/UnrealNetwork.h"
+#include "Camera/CameraComponent.h"
 #include "CustomCharacterMovementComponent.h"
 #include "InteractionComponent.h"
 #include "StatsComponent.h"
-#include "Camera/CameraComponent.h"
 #include "Inventory/InventoryComponent.h"
 #include "Inventory/Item.h"
 
@@ -15,6 +16,10 @@ float MacroDuration = 2.f;
 #else
 #define SLOG(x,...)
 #endif
+
+#define LOCTEXT_NAMESPACE "PlayerCharacter"
+
+static FName NAME_AimDownSightsSocket("ADSSocket");
 
 // Sets default values
 ACustomCharacter::ACustomCharacter(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass<UCustomCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
@@ -51,12 +56,18 @@ ACustomCharacter::ACustomCharacter(const FObjectInitializer& ObjectInitializer) 
 	Inventory = CreateDefaultSubobject<UInventoryComponent>("Inventory");
 	Inventory->SetCapacity(20);
 	Inventory->SetWeightCapacity(80.f);
+	Inventory->OnItemAdded.AddDynamic(this, &ACustomCharacter::ItemAddedToInventory);
+	Inventory->OnItemRemoved.AddDynamic(this, &ACustomCharacter::ItemRemovedFromInventory);
 
 	InteractionCheckFrequency = 0.f;
 	InteractionCheckDistance = 1000.f;
 	
 	Stats = CreateDefaultSubobject<UStatsComponent>("Stats");
 	Inventory->StatsComponent = Stats;
+
+	SetReplicateMovement(true);
+	SetReplicates(true);
+	bAlwaysRelevant = true;
 }
 
 void ACustomCharacter::UseItem(UItem* Item)
@@ -285,6 +296,43 @@ void ACustomCharacter::Tick(float DeltaTime)
 	}
 }
 
+void ACustomCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+}
+
+void ACustomCharacter::Restart()
+{
+	Super::Restart();
+}
+
+float ACustomCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
+	AActor* DamageCauser)
+{
+	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+}
+
+void ACustomCharacter::SetActorHiddenInGame(bool bNewHidden)
+{
+	Super::SetActorHiddenInGame(bNewHidden);
+}
+
+void ACustomCharacter::SetLootSource(UInventoryComponent* NewLootSource)
+{
+}
+
+bool ACustomCharacter::IsLooting() const
+{
+}
+
+void ACustomCharacter::ItemAddedToInventory(UItem* Item)
+{
+}
+
+void ACustomCharacter::ItemRemovedFromInventory(UItem* Item)
+{
+}
+
 // Called to bind functionality to input
 void ACustomCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -292,3 +340,4 @@ void ACustomCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 }
 
+#undef LOCTEXT_NAMESPACE

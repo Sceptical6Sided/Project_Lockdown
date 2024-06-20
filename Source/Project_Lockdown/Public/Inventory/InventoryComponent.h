@@ -150,6 +150,15 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Inventory")
 	FORCEINLINE TArray<class UItem*> GetItems() const {return Items;}
+	
+	UPROPERTY(BlueprintAssignable, Category = "Inventory")
+	FOnInventoryUpdated OnInventoryUpdated;
+
+	UPROPERTY(BlueprintAssignable, Category = "Inventory")
+	FOnItemAdded OnItemAdded;
+
+	UPROPERTY(BlueprintAssignable, Category = "Inventory")
+	FOnItemRemoved OnItemRemoved;
 
 protected:
 	
@@ -163,16 +172,6 @@ protected:
 	
 	UFUNCTION(Client, Reliable)
 	void ClientRefreshInventory();
-	
-	UPROPERTY(BlueprintAssignable, Category = "Inventory")
-	FOnInventoryUpdated OnInventoryUpdated;
-
-	UPROPERTY(BlueprintAssignable, Category = "Inventory")
-	FOnItemAdded OnItemAdded;
-
-	UPROPERTY(BlueprintAssignable, Category = "Inventory")
-	FOnItemRemoved OnItemRemoved;
-
 private:
 	UFUNCTION()
 	void OnRep_Items();

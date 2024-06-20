@@ -35,10 +35,6 @@ UCLASS()
 class PROJECT_LOCKDOWN_API ACustomCharacter : public ACharacter
 {
 	GENERATED_BODY()
-
-protected:
-	//set Custom Movement Component as the movement component
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement") class UCustomCharacterMovementComponent* CustomCharacterMovementComponent;
 	
 public:
 	// Sets default values for this character's properties
@@ -88,9 +84,32 @@ public:
 	FCollisionQueryParams GetIgnoreCharacterParams() const;
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	//set Custom Movement Component as the movement component
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")
+	class UCustomCharacterMovementComponent* CustomCharacterMovementComponent;
 	
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual void Restart() override;
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+	virtual void SetActorHiddenInGame(bool bNewHidden) override;
+	
+public:
+
+	UFUNCTION(BlueprintCallable)
+	void SetLootSource(class UInventoryComponent* NewLootSource);
+
+	UFUNCTION(BlueprintPure, Category="Looting")
+	bool IsLooting() const;
+
+	UFUNCTION()
+	void ItemAddedToInventory(class UItem* Item);
+
+	UFUNCTION()
+	void ItemRemovedFromInventory(class UItem* Item);
+	
+protected:
 	//The time between checking for an interactable in seconds (set to 0.f for every tick)
 	UPROPERTY(EditDefaultsOnly, Category="Interaction")
 	float InteractionCheckFrequency;
@@ -126,9 +145,6 @@ protected:
 	void Interact();
 
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
