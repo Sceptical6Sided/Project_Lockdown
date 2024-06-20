@@ -123,7 +123,9 @@ float UInteractionComponent::GetInteractionPercentage()
 		if (ACustomCharacter* Interacting_Character = Interacting_Characters[0])
 		{
 			if(Interacting_Character && Interacting_Character->IsInteracting())
+			{
 				return 1.f - FMath::Abs(Interacting_Character->GetRemainingInteractTime() / InteractionTime);
+			}
 		}
 	}
 	return 0.f;
