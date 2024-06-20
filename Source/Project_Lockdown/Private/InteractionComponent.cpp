@@ -25,7 +25,7 @@ UInteractionComponent::UInteractionComponent()
 	bAllowMultipleUsers = false;
 
 	Space = EWidgetSpace::Screen;
-	DrawSize = FIntPoint(400,100);
+	DrawSize = FIntPoint(600,100);
 	bDrawAtDesiredSize = true;
 
 	SetActive(true);
@@ -42,8 +42,11 @@ void UInteractionComponent::BeginFocus(ACustomCharacter* Character)
 	}
 
 	OnBeginFocus.Broadcast(Character);
-	
-	SetHiddenInGame(false);
+
+	if (GetNetMode() != NM_DedicatedServer)
+	{
+		SetHiddenInGame(false);	
+	}
 
 	RefreshWidget();
 }
@@ -86,6 +89,7 @@ void UInteractionComponent::Interact(ACustomCharacter* Character)
 
 void UInteractionComponent::RefreshWidget()
 {
+	//Make sure the widget is initialized, and that we are displaying the right values (these may have changed)
 	if(!bHiddenInGame && GetOwner()->GetNetMode() != NM_DedicatedServer)
 	{
 		if (UInteractionWidget* InteractionWidget = Cast<UInteractionWidget>(GetUserWidgetObject()))
