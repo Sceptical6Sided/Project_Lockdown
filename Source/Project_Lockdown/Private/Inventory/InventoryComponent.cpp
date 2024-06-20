@@ -13,8 +13,10 @@
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
 {
-	SetIsReplicated(true);
-	Capacity = 20;
+	OnItemAdded.AddDynamic(this, &UInventoryComponent::ItemAdded);
+	OnItemRemoved.AddDynamic(this, &UInventoryComponent::ItemRemoved);
+	
+	SetIsReplicatedByDefault(true);
 }
 
 void UInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -28,6 +30,7 @@ bool UInventoryComponent::ReplicateSubobjects(UActorChannel* Channel, FOutBunch*
 {
 	bool bWroteSomething = Super::ReplicateSubobjects(Channel, Bunch, RepFlags);
 
+	//Check to see if we even need to replicate the channel
 	if (Channel->KeyNeedsToReplicate(0, ReplicatedItemsKey))
 	{
 		for (auto& Item: Items)
@@ -54,8 +57,12 @@ bool UInventoryComponent::RemoveItem(UItem* Item)
 		if (Item)
 		{
 			Items.RemoveSingle(Item);
+			OnItemRemoved.Broadcast(Item);
 
+			OnRep_Items();
+			
 			ReplicatedItemsKey++;
+			
 			return true;
 		}
 	}
@@ -109,6 +116,7 @@ UItem* UInventoryComponent::FindItem(UItem* Item) const
 				return InvItem;
 			}
 		}
+		//return FindItemByClass(Item->GetClass()); Alternate solution usage is TBD
 	}
 	return nullptr;
 }
@@ -143,6 +151,16 @@ TArray<UItem*> UInventoryComponent::FindItemsByClass(TSubclassOf<UItem> ItemClas
 void UInventoryComponent::OnRep_Items()
 {
 	OnInventoryUpdated.Broadcast();
+
+	for (auto& Item : Items)
+	{
+		//On the client the world won't be set initially, so it set if not
+		if (!Item->World)
+		{
+			OnItemAdded.Broadcast(Item);
+			Item->World = GetWorld();
+		}
+	}
 }
 
 int32 UInventoryComponent::ConsumeItem(UItem* Item)
@@ -194,118 +212,113 @@ FItemAddResult UInventoryComponent::TryAddItemFromClass(TSubclassOf<UItem> ItemC
 	return TryAddItem_Internal(Item);
 }
 
-UItem* UInventoryComponent::AddItem(UItem* Item)
+UItem* UInventoryComponent::AddItem(UItem* Item, const int32 Quantity)
 {
 	if(GetOwner() && GetOwner()->HasAuthority())
 	{
 		UItem* NewItem = NewObject<UItem>(GetOwner(), Item->GetClass());
-		NewItem->SetQuantity(Item->Quantity);
+		NewItem->World = GetWorld();
+		NewItem->SetQuantity(Quantity);
 		NewItem->OwningInventory = this;
 		NewItem->AddedToInventory(this);
 		Items.Add(NewItem);
 		NewItem->MarkDirtyForReplication();
+		OnItemAdded.Broadcast(NewItem);
+		OnRep_Items();
 
 		return NewItem;
 	}
 	return nullptr;
 }
 
+void UInventoryComponent::ItemAdded(UItem* Item)
+{
+	FString RoleString = GetOwner()->HasAuthority() ? "server" : "client";
+	UE_LOG(LogTemp, Warning, TEXT("Item added: %s on %s"), *GetNameSafe(Item), *RoleString);
+}
+
+void UInventoryComponent::ItemRemoved(UItem* Item)
+{
+	FString RoleString = GetOwner()->HasAuthority() ? "server" : "client";
+	UE_LOG(LogTemp, Warning, TEXT("Item Removed: %s on %s"), *GetNameSafe(Item), *RoleString);
+}
+
 FItemAddResult UInventoryComponent::TryAddItem_Internal(UItem* Item)
 {
 	if (GetOwner() && GetOwner()->HasAuthority())
 	{
-		const int32 AddAmount = Item->GetQuantity();
-
-		//Checking inventory, whether it's full, and return if the inventory is full.
-		if (Items.Num() + 1 > GetCapacity())
-		{
-			return FItemAddResult::AddedNone(AddAmount, LOCTEXT("InventoryCapacityFullText","Couldn't add item to Inventory. Inventory is full."));
-		}
-
-		/**Checking inventory, whether it's overweight, and return if it is.
-		 *Also Check first for item weight, because quest items have a weight of 0.f
-		 */
-		if (!FMath::IsNearlyZero(Item->Weight))
-		{
-			if(GetCurrentWeight() + Item->Weight > GetWeightCapacity())
-			{
-				return FItemAddResult::AddedNone(AddAmount, LOCTEXT("InventoryTooMuchWeightText","Couldn't add item to Inventory. Carrying too much weight."));
-			}
-		}
-
-		//Checking if the item is stackable, if it is, and we already have it in the inventory, try to add it to the existing stack
-		if (Item->bStackable)
+		if(Item->bStackable)
 		{
 			ensure(Item->GetQuantity() <= Item->MaxStackSize);
 
-			if (UItem* ExistingItem = FindItem(Item))
+			if(UItem* ExistingItem = FindItem(Item))
 			{
-				if (ExistingItem->GetQuantity() < ExistingItem->MaxStackSize)
+				if(ExistingItem->IsStackFull())
 				{
-					//Calculate how much of the item to add to the existing stack
-					const int32 CapacityMaxAddAmount = ExistingItem->MaxStackSize - ExistingItem->GetQuantity();
-					int32 ActualAddAmount = FMath::Min(AddAmount, CapacityMaxAddAmount);
-
-					FText ErrorText = LOCTEXT("InventoryErrorText","Couldn't add all of the items to your inventory.");
-
-					//Adjust Item quantity based on weight
-					if(!FMath::IsNearlyZero(Item->Weight))
-					{
-
-						const int32 WeightMaxAddAmount = FMath::FloorToInt((WeightCapacity - GetCurrentWeight()) / Item->Weight);
-						ActualAddAmount = FMath::Min(ActualAddAmount, WeightMaxAddAmount);
-
-						if(ActualAddAmount < AddAmount)
-						{
-							ErrorText = FText::Format(LOCTEXT("InventoryTooMuchWeightText","Couldn't add entire stack of {ItemName} to Inventory."),Item->ItemDisplayName);
-						}
-					}
-					else if (ActualAddAmount < AddAmount)
-					{
-						ErrorText = FText::Format(LOCTEXT("InventoryCapacytyFullText","Couldn't add entire stack of {ItemName} to Inventory. Inventory was full."), Item->ItemDisplayName);
-					}
-
-					if(ActualAddAmount <= 0 )
-					{
-						return FItemAddResult::AddedNone(AddAmount, LOCTEXT("InventoryErrorText","Couldn'T add item to inventory. Not enough space."));
-					}
-
-					ExistingItem->SetQuantity(ExistingItem->GetQuantity() + ActualAddAmount);
-
-					ensure(ExistingItem->GetQuantity() <= ExistingItem->MaxStackSize);
-
-					if (ActualAddAmount < AddAmount)
-					{
-						return FItemAddResult::AddedSome(AddAmount, ActualAddAmount, ErrorText);
-					}
-					else
-					{
-						return FItemAddResult::AddedAll(AddAmount);
-					}
+					return FItemAddResult::AddedNone(Item->GetQuantity(), FText::Format(LOCTEXT("StackFullText", "Couldn't add {ItemName}. Tried adding items to a stack that was full."), Item->ItemDisplayName));
 				}
 				else
 				{
-					return  FItemAddResult::AddedNone(AddAmount, FText::Format(LOCTEXT("InventoryFullStackText","Couldn't add {ItemName}. You already have a full stack of {ItemName}"), Item->ItemDisplayName));
+					//Find the maximum amount of the item we could take due to weight
+					const int32 WeightMaxAddAmount = FMath::FloorToInt((WeightCapacity - GetCurrentWeight()) / Item->Weight);
+					const int32 QuantityMaxAddAmount = FMath::Min(ExistingItem->MaxStackSize - ExistingItem->GetQuantity(), Item->GetQuantity());
+					const int32 AddAmount = FMath::Min(WeightMaxAddAmount, QuantityMaxAddAmount);
+					
+					if (AddAmount <= 0)
+					{
+						//Already did full stack check, must not have enough weight
+						return FItemAddResult::AddedNone(Item->GetQuantity(), FText::Format(LOCTEXT("StackWeightFullText", "Couldn't add {ItemName}, too much weight."), Item->ItemDisplayName));
+					}
+					else
+					{
+						ExistingItem->SetQuantity(ExistingItem->GetQuantity() + AddAmount);
+						return AddAmount >= Item->GetQuantity() ? FItemAddResult::AddedAll(Item->GetQuantity()) : FItemAddResult::AddedSome(Item->GetQuantity(), AddAmount, LOCTEXT("StackAddedSomeFullText", "Couldn't add all of stack to inventory."));
+					}
 				}
 			}
 			else
 			{
-				AddItem(Item);
-				return FItemAddResult::AddedAll(AddAmount);
+				if (Items.Num() + 1 > GetCapacity())
+				{
+					return FItemAddResult::AddedNone(Item->GetQuantity(), FText::Format(LOCTEXT("InventoryCapacityFullText", "Couldn't add {ItemName} to Inventory. Inventory is full."), Item->ItemDisplayName));
+				}
+				
+				const int32 WeightMaxAddAmount = FMath::FloorToInt((WeightCapacity - GetCurrentWeight()) / Item->Weight); //What is the number of items we can add due to weight restriction
+				const int32 QuantityMaxAddAmount = FMath::Min(Item->MaxStackSize, Item->GetQuantity());					//What is the number of items we can add due to StackSize restriction
+				const int32 AddAmount = FMath::Min(WeightMaxAddAmount, QuantityMaxAddAmount);							//What is the number of items we can actually add to the inventory (for ex, we can add x+1 due to weight, but StackSize is limited to x)
+
+				AddItem(Item, AddAmount);
+
+				return AddAmount >= Item->GetQuantity() ? FItemAddResult::AddedAll(Item->GetQuantity()) : FItemAddResult::AddedSome(Item->GetQuantity(), AddAmount, LOCTEXT("StackAddedSomeFullText", "Couldn't add all of stack to inventory."));
 			}
 		}
 		else
 		{
-			//Pseudo redundant check, because non-stackable should always have only one item
+			if(Items.Num() + 1 > GetCapacity())
+			{
+				return FItemAddResult::AddedNone(Item->GetQuantity(), FText::Format(LOCTEXT("InventoryCapacityFullText", "Couldn't add {ItemName} to Inventory. Inventory is full."), Item->ItemDisplayName));
+			}
+
+			//Items with zero weight don't require a weight check
+			if (!FMath::IsNearlyZero(Item->Weight))
+			{
+				if (GetCurrentWeight() + Item->Weight > GetWeightCapacity())
+				{
+					return FItemAddResult::AddedNone(Item->GetQuantity(), FText::Format(LOCTEXT("StackWeightFullText", "Couldn't add {ItemName}, too much weight."), Item->ItemDisplayName));
+				}
+			}
+
+			//Non-stackable items should always have a quantity of 1
 			ensure(Item->GetQuantity() == 1);
-			AddItem(Item);
-			return FItemAddResult::AddedAll(AddAmount);
+
+			AddItem(Item, 1);
+
+			return FItemAddResult::AddedAll(Item->GetQuantity());
 		}
 	}
 
-	//AddItem should never be called on a client
-	check(false)
-	return FItemAddResult::AddedNone(-1,LOCTEXT("ErrorMessage","Illigal function call, should be called only from server."));
+	//This function should never be called on a client directly, or the network state would get compromised
+	return FItemAddResult::AddedNone(-1, LOCTEXT("ErrorMessage","AddItem should never be called on a client"));
 }
 
 #pragma endregion

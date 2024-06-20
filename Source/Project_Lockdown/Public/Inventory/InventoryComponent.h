@@ -10,6 +10,10 @@
 //Called when inventory processed a change, UI will bind to this and refresh itself
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInventoryUpdated);
 
+/**Called on server when an item is added to this inventory*/
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemAdded, class UItem*, Item);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemRemoved, class UItem*, Item);
+
 UENUM()
 enum class EItemAddResult : uint8
 {
@@ -159,8 +163,15 @@ protected:
 	
 	UFUNCTION(Client, Reliable)
 	void ClientRefreshInventory();
+	
 	UPROPERTY(BlueprintAssignable, Category = "Inventory")
 	FOnInventoryUpdated OnInventoryUpdated;
+
+	UPROPERTY(BlueprintAssignable, Category = "Inventory")
+	FOnItemAdded OnItemAdded;
+
+	UPROPERTY(BlueprintAssignable, Category = "Inventory")
+	FOnItemRemoved OnItemRemoved;
 
 private:
 	UFUNCTION()
@@ -172,5 +183,11 @@ private:
 	FItemAddResult TryAddItem_Internal(class UItem* Item);
 
 	//Don't call Items.Add() directly, this is a function that handles the networking, and it calls Items.Add() internally
-	UItem* AddItem(class UItem* Item);
+	UItem* AddItem(class UItem* Item, const int32 Quantity);
+
+	UFUNCTION()
+	void ItemAdded(class UItem* Item);
+
+	UFUNCTION()
+	void ItemRemoved(class UItem* Item);
 };
