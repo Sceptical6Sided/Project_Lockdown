@@ -323,6 +323,7 @@ void ACustomCharacter::SetLootSource(UInventoryComponent* NewLootSource)
 
 bool ACustomCharacter::IsLooting() const
 {
+	return false;
 }
 
 void ACustomCharacter::ItemAddedToInventory(UItem* Item)

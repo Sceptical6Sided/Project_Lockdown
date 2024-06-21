@@ -10,7 +10,7 @@
 float MacroDuration = 2.f;
 #define SLOG(x,...) if(GEngine){GEngine->AddOnScreenDebugMessage(-1, MacroDuration ? MacroDuration : -1.f, FColor::Yellow, FString::Printf(TEXT(x), ##__VA_ARGS__));}
 #else
-#define SLOG(x,...)
+#define  SLOG(x,...)
 #endif
 
 UInteractionComponent::UInteractionComponent()
