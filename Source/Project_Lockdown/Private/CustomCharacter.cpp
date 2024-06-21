@@ -70,8 +70,48 @@ ACustomCharacter::ACustomCharacter(const FObjectInitializer& ObjectInitializer) 
 	bAlwaysRelevant = true;
 }
 
+// Called when the game starts or when spawned
+void ACustomCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (!IsLocallyControlled())
+	{
+		CameraComponent->DestroyComponent();
+	}
+}
+
+// Called every frame
+void ACustomCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	//const bool bIsInteractingOnServer = (HasAuthority() && IsInteracting());
+	if (GetWorld()->TimeSince(InteractionData.LastInteractionCheckedTime) > InteractionCheckFrequency)
+	{
+		PerformInteractionCheck();
+	}
+
+	if (IsLocallyControlled())
+	{
+		//Weapon handling code comes here
+	}
+}
+
 void ACustomCharacter::UseItem(UItem* Item)
 {
+	if (!HasAuthority() && Item)
+	{
+		//ServerUseItem(Item);
+	}
+
+	if (HasAuthority())
+	{
+		if (Inventory && !Inventory->FindItem(Item))
+		{
+			return;
+		}
+	}
+	
 	if (Item)
 	{
 		Item->Use(this);
@@ -242,10 +282,19 @@ void ACustomCharacter::EndInteract()
 	InteractionData.bInteractHeld = false;
 
 	GetWorldTimerManager().ClearTimer(TimerHandle_Interact);
+	
 	if (UInteractionComponent* Interactable = GetInteractable())
 	{
 		Interactable->EndInteract(this);
 	}
+}
+
+void ACustomCharacter::Interact()
+{
+	GetWorldTimerManager().ClearTimer(TimerHandle_Interact);
+
+	if (UInteractionComponent* Interactable = GetInteractable())
+		Interactable->Interact(this);
 }
 
 void ACustomCharacter::ServerBeginInteract_Implementation()
@@ -268,33 +317,7 @@ bool ACustomCharacter::ServerEndInteract_Validate()
 	return true;
 }
 
-void ACustomCharacter::Interact()
-{
-	GetWorldTimerManager().ClearTimer(TimerHandle_Interact);
-
-	if (UInteractionComponent* Interactable = GetInteractable())
-		Interactable->Interact(this);
-}
-
 #pragma endregion
-
-// Called when the game starts or when spawned
-void ACustomCharacter::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-// Called every frame
-void ACustomCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-	const bool bIsInteractingOnServer = (HasAuthority() && IsInteracting());
-	if ((!HasAuthority() || bIsInteractingOnServer) && (GetWorld() -> TimeSince(InteractionData.LastInteractionCheckedTime) > InteractionCheckFrequency))
-	{
-		PerformInteractionCheck();
-	}
-}
 
 void ACustomCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
