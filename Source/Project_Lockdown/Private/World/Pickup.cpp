@@ -27,7 +27,7 @@ APickup::APickup()
 	InteractionComponent->OnInteract.AddDynamic(this, &APickup::OnTakePickup);
 	InteractionComponent->SetupAttachment(PickupMesh);
 
-	SetReplicates(true);
+	bReplicates = true;
 }
 
 void APickup::InitializePickup(const TSubclassOf<UItem> ItemClass, const int32 Quantity)
