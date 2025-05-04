@@ -7,8 +7,11 @@
 #include "InteractionComponent.h"
 #include "StatsComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Engine/SkinnedAssetCommon.h"
+#include "Inventory/GearItem.h"
 #include "Inventory/InventoryComponent.h"
 #include "Inventory/Item.h"
+#include "Materials/MaterialInstance.h"
 #include "Windows/WindowsApplication.h"
 #include "World/Pickup.h"
 
@@ -22,8 +25,6 @@ float MacroDuration = 2.f;
 
 #define LOCTEXT_NAMESPACE "PlayerCharacter"
 
-static FName NAME_AimDownSightsSocket("ADSSocket");
-
 // Sets default values
 ACustomCharacter::ACustomCharacter(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass<UCustomCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
@@ -36,26 +37,26 @@ ACustomCharacter::ACustomCharacter(const FObjectInitializer& ObjectInitializer) 
 	CameraComponent->SetupAttachment(GetMesh());
 	CameraComponent->bUsePawnControlRotation = true;
 
+	//Setting the meshes as members of the PlayerMeshes array, so they are more easily reachable, and the code is cleaner
+	HelmetMesh=PlayerMeshes.Add(EEquippableSlot::EIS_Helmet, CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("HelmetMesh")));
+	ChestMesh=PlayerMeshes.Add(EEquippableSlot::EIS_Chest, CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("ChestMesh")));
+	LegsMesh=PlayerMeshes.Add(EEquippableSlot::EIS_Legs, CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("LegsMesh")));
+	FeetMesh=PlayerMeshes.Add(EEquippableSlot::EIS_Feet, CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FeetMesh")));
+	VestMesh=PlayerMeshes.Add(EEquippableSlot::EIS_Vest, CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("VestMesh")));
+	HandsMesh=PlayerMeshes.Add(EEquippableSlot::EIS_Hands, CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("HandsMesh")));
+	BackpackMesh=PlayerMeshes.Add(EEquippableSlot::EIS_Backpack, CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BackpackMesh")));
 
-	/*Setup for modular character
-	 *(Base mesh is used for the characters head,so
-	 *every part of the mesh gets parented to the head of the character)
-	 */
-	HelmetMesh = CreateDefaultSubobject<USkeletalMeshComponent>("HelmetMesh");
-	HelmetMesh->SetupAttachment(GetMesh());
-	ChestMesh = CreateDefaultSubobject<USkeletalMeshComponent>("ChestMesh");
-	ChestMesh->SetupAttachment(GetMesh());
-	LegsMesh = CreateDefaultSubobject<USkeletalMeshComponent>("LegsMesh");
-	LegsMesh->SetupAttachment(GetMesh());
-	FeetMesh = CreateDefaultSubobject<USkeletalMeshComponent>("FeetMesh");
-	FeetMesh->SetupAttachment(GetMesh());
-	HandsMesh = CreateDefaultSubobject<USkeletalMeshComponent>("HandsMesh");
-	HandsMesh->SetupAttachment(GetMesh());
-	VestMesh = CreateDefaultSubobject<USkeletalMeshComponent>("VestMesh");
-	VestMesh->SetupAttachment(GetMesh());
-	BackpackMesh = CreateDefaultSubobject<USkeletalMeshComponent>("BackpackMesh");
-	BackpackMesh->SetupAttachment(GetMesh());
-
+	//Tell all the "body" meshes to use the head mesh for animation by replicating its pose component
+	for (auto& PlayerMesh : PlayerMeshes)
+	{
+		USkeletalMeshComponent* MeshComponent = PlayerMesh.Value;
+		MeshComponent->SetupAttachment(GetMesh());
+		MeshComponent->SetLeaderPoseComponent(GetMesh());
+	}
+	
+	//Finally adding the head to the array so it does not get attached to itself
+	PlayerMeshes.Add(EEquippableSlot::EIS_Head, GetMesh());
+	
 	Inventory = CreateDefaultSubobject<UInventoryComponent>("Inventory");
 	Inventory->SetCapacity(20);
 	Inventory->SetWeightCapacity(80.f);
@@ -78,6 +79,12 @@ void ACustomCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	//Caching out the default meshes for resets
+	for (auto& PlayerMesh : PlayerMeshes)
+	{
+		NakedMeshes.Add(PlayerMesh.Key, PlayerMesh.Value->SkeletalMesh);
+	}
+	
 	if (!IsLocallyControlled())
 	{
 		CameraComponent->DestroyComponent();
@@ -411,6 +418,73 @@ void ACustomCharacter::ItemAddedToInventory(UItem* Item)
 
 void ACustomCharacter::ItemRemovedFromInventory(UItem* Item)
 {
+}
+
+bool ACustomCharacter::EquipItem(UEquippableItem* Item)
+{
+	EquippedItems.Add(Item->Slot, Item);
+	OnEquippedItemsChanged.Broadcast(Item->Slot, Item);
+	return true;
+}
+
+bool ACustomCharacter::UnEquipItem(UEquippableItem* Item)
+{
+	if(Item)
+	{
+		if(EquippedItems.Contains(Item->Slot))
+		{
+			if(Item == *EquippedItems.Find(Item->Slot))
+			{
+				EquippedItems.Remove(Item->Slot);
+				OnEquippedItemsChanged.Broadcast(Item->Slot,nullptr);
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+void ACustomCharacter::EquipGear(class UGearItem* Gear)
+{
+	if(USkeletalMeshComponent* GearMesh = *PlayerMeshes.Find(Gear->Slot))
+	{
+		GearMesh->SetSkeletalMesh(Gear->Mesh);
+		GearMesh->SetMaterial(GearMesh->GetMaterials().Num() -1, Gear->MaterialInstance);
+	}
+}
+
+void ACustomCharacter::UnEquipGear(const EEquippableSlot Slot)
+{
+	if(USkeletalMeshComponent* EquippableMesh = *PlayerMeshes.Find(Slot))
+	{
+		if(USkeletalMesh* BodyMesh = * NakedMeshes.Find(Slot))
+		{
+			EquippableMesh->SetSkeletalMesh(BodyMesh);
+
+			//Put the materials back on the body mesh
+			for (int32 i = 0; i < BodyMesh->Materials.Num(); ++i)
+			{
+				if (BodyMesh->Materials.IsValidIndex(i))
+				{
+					EquippableMesh->SetMaterial(i, BodyMesh->Materials[i].MaterialInterface);
+				}
+			}
+		}
+		else
+		{
+			//set mesh to empty for external items, like backpacks
+			EquippableMesh->SetSkeletalMesh(nullptr);
+		}
+	}
+}
+
+USkeletalMeshComponent* ACustomCharacter::GetSlotSkeletalMeshComponent(const EEquippableSlot Slot)
+{
+	if(PlayerMeshes.Contains(Slot))
+	{
+		return *PlayerMeshes.Find(Slot);
+	}
+	return nullptr;
 }
 
 // Called to bind functionality to input

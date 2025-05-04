@@ -3,15 +3,18 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Inventory/Item.h"
+#include "Inventory/GearItem.h"
 #include "ArmorItem.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PROJECT_LOCKDOWN_API UArmorItem : public UItem
+class PROJECT_LOCKDOWN_API UArmorItem : public UGearItem
 {
 	GENERATED_BODY()
-	
+public:
+	//Used when calculating damage done to the player
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Armor", meta = (ClampMin = 0.0, ClampMax = 1.0))
+	float DamageDefenceMultiplier;
 };

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Inventory/EquippableItem.h"
 #include "CustomCharacter.generated.h"
 
 USTRUCT()
@@ -31,6 +32,8 @@ struct FInteractionData
 	bool bInteractHeld;
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnEquippedItemsChanged, const EEquippableSlot, Slot, const UEquippableItem*, Item);
+
 UCLASS()
 class PROJECT_LOCKDOWN_API ACustomCharacter : public ACharacter
 {
@@ -48,6 +51,12 @@ public:
 
 	//Sets Stat Component for init
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stats") class UStatsComponent* Stats;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Mesh")
+	TMap<EEquippableSlot, USkeletalMesh*> NakedMeshes;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Mesh")
+	TMap<EEquippableSlot, USkeletalMeshComponent*> PlayerMeshes;
 	
 	UPROPERTY(EditAnywhere, Category = "Components")
 	class USkeletalMeshComponent* HelmetMesh;
@@ -98,6 +107,9 @@ public:
 	
 	FCollisionQueryParams GetIgnoreCharacterParams() const;
 
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE TMap<EEquippableSlot, UEquippableItem*> GetEquippedItems() const {return EquippedItems;}
+
 protected:
 	//set Custom Movement Component as the movement component
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")
@@ -109,7 +121,6 @@ protected:
 	virtual void Restart() override;
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	virtual void SetActorHiddenInGame(bool bNewHidden) override;
-	
 public:
 
 	UFUNCTION(BlueprintCallable)
@@ -123,8 +134,26 @@ public:
 
 	UFUNCTION()
 	void ItemRemovedFromInventory(class UItem* Item);
+
+	
+	bool EquipItem(class UEquippableItem* Item);
+	bool UnEquipItem(class UEquippableItem* Item);
+
+	void EquipGear(class UGearItem* Gear);
+	void UnEquipGear(const EEquippableSlot Slot);
+
+	UPROPERTY(BlueprintAssignable, Category = "Items")
+	FOnEquippedItemsChanged OnEquippedItemsChanged;
+	
+	UFUNCTION(BlueprintPure)
+	class USkeletalMeshComponent* GetSlotSkeletalMeshComponent(const EEquippableSlot Slot);
 	
 protected:
+
+	//Allows efficient access to equipped items
+	UPROPERTY(VisibleAnywhere, Category="Items")
+	TMap<EEquippableSlot, UEquippableItem*> EquippedItems;
+	
 	//The time between checking for an interactable in seconds (set to 0.f for every tick)
 	UPROPERTY(EditDefaultsOnly, Category="Interaction")
 	float InteractionCheckFrequency;
@@ -141,7 +170,7 @@ protected:
 	FORCEINLINE class UInteractionComponent* GetInteractable() const {return InteractionData.ViewedInteractionComponent;}
 
 	FTimerHandle TimerHandle_Interact;
-
+	
 	void PerformInteractionCheck();
 
 	void CantFindNewInteractable();
