@@ -74,9 +74,24 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Health", meta = (ClampMin = 0.0))
 	float Health = 100.f;
-	
+
+	// Called on Server to use item from the player inventory
 	UFUNCTION(BlueprintCallable, Category = "Items")
 	void UseItem(class UItem* Item);
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerUseItem(class UItem* Item);
+
+	//Called on Server to drop the item from the player inventory
+	UFUNCTION(BlueprintCallable, Category = "Items")
+	void DropItem(class UItem* Item, const int32 Quantity);
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerDropItem(class UItem* Item, const int32 Quantity);
+
+	//Needed because the pickups use a blueprint base class
+	UPROPERTY(EditDefaultsOnly, Category = "Item")
+	TSubclassOf<class APickup> PickupClass;
 	
 	virtual void Jump() override;
 	virtual void StopJumping() override;

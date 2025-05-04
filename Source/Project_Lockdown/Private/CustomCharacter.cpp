@@ -6,8 +6,11 @@
 #include "CustomCharacterMovementComponent.h"
 #include "InteractionComponent.h"
 #include "StatsComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Inventory/InventoryComponent.h"
 #include "Inventory/Item.h"
+#include "Windows/WindowsApplication.h"
+#include "World/Pickup.h"
 
 //Helper Macro
 #if 0
@@ -101,7 +104,7 @@ void ACustomCharacter::UseItem(UItem* Item)
 {
 	if (!HasAuthority() && Item)
 	{
-		//ServerUseItem(Item);
+		ServerUseItem(Item);
 	}
 
 	if (HasAuthority())
@@ -117,6 +120,59 @@ void ACustomCharacter::UseItem(UItem* Item)
 		Item->Use(this);
 		Item->OnUse(this); //Bp event
 	}
+}
+
+void ACustomCharacter::ServerUseItem_Implementation(UItem* Item)
+{
+	UseItem(Item);
+}
+
+bool ACustomCharacter::ServerUseItem_Validate(UItem* Item)
+{
+	return true;
+}
+
+void ACustomCharacter::DropItem(UItem* Item, const int32 Quantity)
+{
+	if (Inventory && Item && Inventory->FindItem(Item))
+	{
+		if(!HasAuthority())
+		{
+			ServerDropItem(Item, Quantity);
+			return;
+		}
+
+		if (HasAuthority())
+		{
+			const int32 ItemQauntity = Item->GetQuantity();
+			const int32 DroppedQuantity = Inventory->ConsumeItem(Item,Quantity);
+
+			FActorSpawnParameters ItemSpawnParams;
+			ItemSpawnParams.Owner = this;
+			ItemSpawnParams.bNoFail = true;
+			ItemSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+			FVector ItemSpawnLocation = GetActorLocation();
+			ItemSpawnLocation.Z -= GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+
+			FTransform ItemSpawnTransform(GetActorRotation(), ItemSpawnLocation);
+
+			ensure(PickupClass);
+
+			APickup* Pickup = GetWorld()->SpawnActor<APickup>(PickupClass, ItemSpawnTransform, ItemSpawnParams);
+			Pickup-> InitializePickup(Item->GetClass(), DroppedQuantity);
+		}
+	}
+}
+
+void ACustomCharacter::ServerDropItem_Implementation(UItem* Item, const int32 Quantity)
+{
+	DropItem(Item, Quantity);
+}
+
+bool ACustomCharacter::ServerDropItem_Validate(UItem* Item, const int32 Quantity)
+{
+	return true;
 }
 
 void ACustomCharacter::Jump()
