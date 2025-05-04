@@ -144,7 +144,7 @@ void ACustomCharacter::DropItem(UItem* Item, const int32 Quantity)
 
 		if (HasAuthority())
 		{
-			const int32 ItemQauntity = Item->GetQuantity();
+			const int32 ItemQuantity = Item->GetQuantity();
 			const int32 DroppedQuantity = Inventory->ConsumeItem(Item,Quantity);
 
 			FActorSpawnParameters ItemSpawnParams;
