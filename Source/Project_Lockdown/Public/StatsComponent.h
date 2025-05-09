@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "StatsComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStaminaChanged);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECT_LOCKDOWN_API UStatsComponent : public UActorComponent
@@ -19,6 +20,7 @@ public:
 //Health variables
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Health", meta = (ClampMin = 0.0)) float Health = 100.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Health", meta = (ClampMin = 0.0)) float MaxHealth = 100.f;
 private:
 	UPROPERTY(EditDefaultsOnly, Category="Health") float HealthRegen = 0.5f;
 	UPROPERTY(EditDefaultsOnly, Category="Health") float HealthRegen_Rate = 0.25f;
@@ -27,6 +29,7 @@ private:
 //Stamina variables
 public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category="Stamina", meta = (ClampMin = 0.0)) float Stamina = 100.f;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category="Stamina", meta = (ClampMin = 0.0)) float MaxStamina = 100.f;
 private:
 	UPROPERTY(EditDefaultsOnly, Category="Stamina") float StaminaDecay = 0.5f;
 	UPROPERTY(EditDefaultsOnly, Category="Stamina") float StaminaRegen = 0.5f;

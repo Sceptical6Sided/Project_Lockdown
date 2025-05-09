@@ -401,70 +401,68 @@ void UCustomCharacterMovementComponent::ExitSlide()
 
 void UCustomCharacterMovementComponent::PhysSlide(float deltaTime, int32 Iterations)
 {
-	if (deltaTime < MIN_TICK_TIME)
-	{
-		return;
-	}
+    // Restore any root motion velocity added in a previous frame
+    RestorePreAdditiveRootMotionVelocity();
 
-	RestorePreAdditiveRootMotionVelocity();
+    // Check if the character is on a valid sliding surface and moving fast enough
+    FHitResult SurfaceHit;
+    if (!GetSliderSurface(SurfaceHit) || Velocity.SizeSquared() < FMath::Square(Slide_MinSpeed))
+    {
+        ExitSlide();
+        StartNewPhysics(deltaTime, Iterations);
+        return;
+    }
 
-	FHitResult SurfaceHit;
-	if (!GetSliderSurface(SurfaceHit) || Velocity.SizeSquared() < pow(Slide_MinSpeed,2))
-	{
-		ExitSlide();
-		StartNewPhysics(deltaTime, Iterations);
-		return;
-	}
+    // Apply gravity force in the downward direction
+    Velocity += Slide_GravityForce * FVector::DownVector * deltaTime;
 
-	//Apply surface Gravity
-	Velocity += Slide_GravityForce * FVector::DownVector * deltaTime; //v += a * dt
+    // If no animation root motion or override velocity is present, calculate movement velocity
+    if (!HasAnimRootMotion() && !CurrentRootMotion.HasOverrideVelocity())
+    {
+        CalcVelocity(deltaTime, Slide_FrictionFactor, true, GetMaxBrakingDeceleration());
+    }
 
-	//Strafe controls (commented out until bugs get to be sorted out)
-	/*if (FMath::Abs(FVector::DotProduct(Acceleration.GetSafeNormal(), UpdatedComponent->GetRightVector())) > .5)
-	{
-		Acceleration = Acceleration.ProjectOnTo(UpdatedComponent->GetRightVector());
-	}
-	else
-	{
-		Acceleration = FVector::ZeroVector;
-	}*/
+    // Apply root motion to the velocity if needed
+    ApplyRootMotionToVelocity(deltaTime);
 
-	//Calculate Velocity
-	if(!HasAnimRootMotion() && !CurrentRootMotion.HasOverrideVelocity())
-	{
-		CalcVelocity(deltaTime, Slide_FrictionFactor, true, GetMaxBrakingDeceleration());
-	}
-	ApplyRootMotionToVelocity(deltaTime);
+    // Prepare for movement iteration
+    Iterations++;
+    bJustTeleported = false;
 
-	//Perform Move
-	Iterations++;
-	bJustTeleported = false;
+    // Store the current location and rotation for post-movement velocity calculation
+    const FVector OldLocation = UpdatedComponent->GetComponentLocation();
+    const FQuat OldRotation = UpdatedComponent->GetComponentRotation().Quaternion();
 
-	FVector OldLocation = UpdatedComponent->GetComponentLocation();
-	FQuat OldRotation = UpdatedComponent->GetComponentRotation().Quaternion();
-	FHitResult Hit(1.f);
-	FVector Adjusted = Velocity * deltaTime; // x = v * dt
-	FVector VelocityPlaneDirection = FVector::VectorPlaneProject(Velocity,SurfaceHit.Normal).GetSafeNormal();
-	FQuat NewRotation = FRotationMatrix::MakeFromXZ(VelocityPlaneDirection,SurfaceHit.Normal).ToQuat();
-	SafeMoveUpdatedComponent(Adjusted,NewRotation,true,Hit);
+    // Calculate the intended movement vector for this frame
+    FHitResult Hit(1.f);
+    const FVector Adjusted = Velocity * deltaTime;
 
-	if (Hit.Time < 1.f)
-	{
-		HandleImpact(Hit, deltaTime, Adjusted);
-		SlideAlongSurface(Adjusted,(1.f-Hit.Time), Hit.Normal, Hit, true);
-	}
+    // Determine the direction to slide along the surface
+    const FVector VelocityPlaneDirection = FVector::VectorPlaneProject(Velocity, SurfaceHit.Normal).GetSafeNormal();
+    const FQuat NewRotation = FRotationMatrix::MakeFromXZ(VelocityPlaneDirection, SurfaceHit.Normal).ToQuat();
 
-	FHitResult NewSurfaceHit;
-	if (!GetSliderSurface(NewSurfaceHit) || Velocity.SizeSquared() < pow(Slide_MinSpeed, 2))
-	{
-		ExitSlide();
-	}
+    // Attempt to move the component along the slide
+    SafeMoveUpdatedComponent(Adjusted, NewRotation, true, Hit);
 
-	//Update Outgoing Velocity & Acceleration
-	if (!bJustTeleported && !HasAnimRootMotion() && !CurrentRootMotion.HasOverrideVelocity())
-	{
-		Velocity = (UpdatedComponent->GetComponentLocation() - OldLocation) / deltaTime; // v = dx / dt
-	}
+    // If we hit something, handle the impact and continue sliding along the new surface
+    if (Hit.Time < 1.f)
+    {
+        HandleImpact(Hit, deltaTime, Adjusted);
+        SlideAlongSurface(Adjusted, 1.f - Hit.Time, Hit.Normal, Hit, true);
+    }
+
+    // Check if we should exit the slide after the movement
+    FHitResult NewSurfaceHit;
+    if (!GetSliderSurface(NewSurfaceHit) || Velocity.SizeSquared() < FMath::Square(Slide_MinSpeed))
+    {
+        ExitSlide();
+    }
+
+    // Update velocity based on actual movement, if not overridden or teleported
+    if (!bJustTeleported && !HasAnimRootMotion() && !CurrentRootMotion.HasOverrideVelocity())
+    {
+        Velocity = (UpdatedComponent->GetComponentLocation() - OldLocation) / deltaTime;
+    }
 }
 
 bool UCustomCharacterMovementComponent::GetSliderSurface(FHitResult& Hit) const
