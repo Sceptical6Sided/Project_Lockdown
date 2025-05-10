@@ -206,7 +206,7 @@ float UCustomCharacterMovementComponent::GetMaxBrakingDeceleration() const
 //Movement Pipeline
 void UCustomCharacterMovementComponent::UpdateCharacterStateBeforeMovement(float DeltaSeconds)
 {
-	if(MovementMode == MOVE_Walking && Safe_bWantsToSprint && StatsComponent->Stamina<=0)
+	if(MovementMode == MOVE_Walking && Safe_bWantsToSprint && StatsComponent->GetStamina()<=0)
 	{
 		Safe_bWantsToSprint = false;
 	}

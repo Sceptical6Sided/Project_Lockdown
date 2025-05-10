@@ -6,7 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "StatsComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStaminaChanged);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStaminaChanged, float, NewStamina, float, MaxStamina);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECT_LOCKDOWN_API UStatsComponent : public UActorComponent
@@ -16,6 +16,7 @@ class PROJECT_LOCKDOWN_API UStatsComponent : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UStatsComponent();
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
 //Health variables
 public:
@@ -28,26 +29,35 @@ private:
 	
 //Stamina variables
 public:
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category="Stamina", meta = (ClampMin = 0.0)) float Stamina = 100.f;
+	UPROPERTY(BlueprintAssignable, Category = "Stamina")
+	FOnStaminaChanged OnStaminaChanged;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category="Stamina", meta = (ClampMin = 0.0)) float MaxStamina = 100.f;
 private:
+	UPROPERTY(EditDefaultsOnly, Category="Stamina", meta = (ClampMin = 0.0), ReplicatedUsing="OnRep_Stamina") float Stamina = 100.f;
 	UPROPERTY(EditDefaultsOnly, Category="Stamina") float StaminaDecay = 0.5f;
 	UPROPERTY(EditDefaultsOnly, Category="Stamina") float StaminaRegen = 0.5f;
 	UPROPERTY(EditDefaultsOnly, Category="Stamina") float StaminaRegen_Rate = 0.25f;
 	UPROPERTY(EditDefaultsOnly, Category="Stamina") float StaminaRegen_Delay = 1.f;
-
-public:
-	UPROPERTY(EditDefaultsOnly, Category="Weight", meta = (ClampMin = 0.0)) float Weight = 0.f;
 	
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-	void RegenStamina() { Stamina += StaminaRegen; };
+	void RegenStamina();
 	
 public:
 	void DecayStamina();
 	void StartRegenStamina();
 	void StopRegenStamina();
+	
+	//Helper Functions for Stamina
+	UFUNCTION()
+	void OnRep_Stamina();
+	UFUNCTION(BlueprintCallable, Category = "Stamina")
+	float GetStamina() const { return Stamina; }
+	UFUNCTION(BlueprintCallable, Category = "Stamina")
+	float GetStaminaPercent() const { return MaxStamina > 0 ? Stamina / MaxStamina : 0.f; }
+	UFUNCTION(BlueprintCallable, Category = "Stamina")
+	float GetMaxStamina() const { return MaxStamina; }
 
 private:
 	FTimerHandle TimerHandle_StaminaRegen;
