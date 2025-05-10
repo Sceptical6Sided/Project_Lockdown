@@ -7,14 +7,20 @@
 
 void UStatsComponent::RegenStamina()
 {
-	//value is clamped to avoid going over the MaxStamina rate
-	Stamina = FMath::Clamp(Stamina + StaminaRegen, 0.0f, MaxStamina);
+	ServerSetCurrentStamina(Stamina + StaminaRegen);
+}
+
+void UStatsComponent::ServerSetCurrentStamina_Implementation(float NewStamina)
+{
+	//value is clamped to avoid going into negatives or going over the MaxStamina
+	Stamina = FMath::Clamp(NewStamina, 0.0f, MaxStamina);
+	OnStaminaChanged.Broadcast(Stamina, MaxStamina);
 }
 
 void UStatsComponent::DecayStamina()
 {
-	//value is clamped to avoid going into negatives
-	Stamina = FMath::Clamp(Stamina + StaminaDecay, 0.0f, MaxStamina);
+	
+	ServerSetCurrentStamina(Stamina-StaminaDecay);
 }
 
 void UStatsComponent::StartRegenStamina()
