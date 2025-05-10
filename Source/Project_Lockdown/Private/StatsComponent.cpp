@@ -64,5 +64,6 @@ void UStatsComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 void UStatsComponent::BeginPlay()
 {
 	Super::BeginPlay();
+	OnStaminaChanged.Broadcast(Stamina,MaxStamina);
 }
 #pragma endregion 
