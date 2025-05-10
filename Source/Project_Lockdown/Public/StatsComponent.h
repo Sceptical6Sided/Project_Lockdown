@@ -43,6 +43,8 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 	void RegenStamina();
+	void SetCurrentStamina(float NewStamina);
+	
 	UFUNCTION(Server, Reliable)
 	void ServerSetCurrentStamina(float NewStamina);
 	

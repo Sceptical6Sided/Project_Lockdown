@@ -7,10 +7,22 @@
 
 void UStatsComponent::RegenStamina()
 {
-	ServerSetCurrentStamina(Stamina + StaminaRegen);
+	if (GetOwnerRole() == ROLE_Authority)
+	{
+		SetCurrentStamina(Stamina + StaminaRegen);
+	}
+	else
+	{
+		ServerSetCurrentStamina(Stamina + StaminaRegen);
+	}
 }
 
 void UStatsComponent::ServerSetCurrentStamina_Implementation(float NewStamina)
+{
+	SetCurrentStamina(NewStamina);
+}
+
+void UStatsComponent::SetCurrentStamina(float NewStamina)
 {
 	//value is clamped to avoid going into negatives or going over the MaxStamina
 	Stamina = FMath::Clamp(NewStamina, 0.0f, MaxStamina);
@@ -19,8 +31,14 @@ void UStatsComponent::ServerSetCurrentStamina_Implementation(float NewStamina)
 
 void UStatsComponent::DecayStamina()
 {
-	
-	ServerSetCurrentStamina(Stamina-StaminaDecay);
+	if (GetOwnerRole() == ROLE_Authority)
+	{
+		SetCurrentStamina(Stamina-StaminaDecay);
+	}
+	else
+	{
+		ServerSetCurrentStamina(Stamina-StaminaDecay);
+	}
 }
 
 void UStatsComponent::StartRegenStamina()
@@ -44,6 +62,7 @@ void UStatsComponent::StopRegenStamina()
 void UStatsComponent::OnRep_Stamina()
 {
 	OnStaminaChanged.Broadcast(Stamina, MaxStamina);
+	UE_LOG(LogTemp, Warning, TEXT("[CLIENT] Broadcast from StatsComponent: %s"), *GetName());
 }
 
 #pragma region DefaultFunctions
@@ -64,6 +83,16 @@ void UStatsComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 void UStatsComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (GetOwner()->HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SERVER] StatsComponent attached to: %s"), *GetOwner()->GetName());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[CLIENT] StatsComponent attached to: %s"), *GetOwner()->GetName());
+	}
+	
 	OnStaminaChanged.Broadcast(Stamina,MaxStamina);
 }
 #pragma endregion 

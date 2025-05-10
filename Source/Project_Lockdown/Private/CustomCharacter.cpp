@@ -28,6 +28,7 @@ float MacroDuration = 2.f;
 // Sets default values
 ACustomCharacter::ACustomCharacter(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass<UCustomCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
+	bReplicates = true;
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -67,6 +68,7 @@ ACustomCharacter::ACustomCharacter(const FObjectInitializer& ObjectInitializer) 
 	InteractionCheckDistance = 1000.f;
 	
 	Stats = CreateDefaultSubobject<UStatsComponent>("Stats");
+	Stats->SetIsReplicated(true);
 	Inventory->StatsComponent = Stats;
 
 	SetReplicateMovement(true);
