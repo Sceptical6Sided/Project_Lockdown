@@ -5,10 +5,10 @@
       <option name="PLATFORM" value="Win64" />
       <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Project_Lockdown.uproject" />
       <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
-      <option name="EXECUTABLE_PATH" value="D:\Games\Epic\UE_5.3\Engine\Binaries\Win64\UnrealEditor-Win64-DebugGame.exe" />
+      <option name="EXECUTABLE_PATH" value="D:\UnrealEngineSourceBuild\UE_5.3.2\Engine\Binaries\Win64\UnrealEditor-Win64-DebugGame.exe" />
       <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;E:\Projects\Project_Lockdown\Project_Lockdown.uproject&quot;" />
       <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="D:\Games\Epic\UE_5.3" />
+      <option name="WORKING_DIRECTORY" value="D:\UnrealEngineSourceBuild\UE_5.3.2" />
       <option name="PASS_PARENT_ENVS" value="1" />
       <option name="USE_EXTERNAL_CONSOLE" value="0" />
       <option name="TERMINAL_INTERACTION_BEHAVIOR" value="FORCE_CONSOLE" />
@@ -21,7 +21,7 @@
       <option name="EXECUTABLE_PATH" value="E:\Projects\Project_Lockdown\Binaries\Win64\Project_Lockdown-Win64-DebugGame.exe" />
       <option name="MANDATORY_PROGRAM_PARAMETERS" value="" />
       <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="D:\Games\Epic\UE_5.3" />
+      <option name="WORKING_DIRECTORY" value="D:\UnrealEngineSourceBuild\UE_5.3.2" />
       <option name="PASS_PARENT_ENVS" value="1" />
       <option name="USE_EXTERNAL_CONSOLE" value="0" />
       <option name="TERMINAL_INTERACTION_BEHAVIOR" value="FORCE_CONSOLE" />
@@ -31,10 +31,10 @@
       <option name="PLATFORM" value="Win64" />
       <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Project_Lockdown.uproject" />
       <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
-      <option name="EXECUTABLE_PATH" value="D:\Games\Epic\UE_5.3\Engine\Binaries\Win64\UnrealEditor.exe" />
+      <option name="EXECUTABLE_PATH" value="D:\UnrealEngineSourceBuild\UE_5.3.2\Engine\Binaries\Win64\UnrealEditor.exe" />
       <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;E:\Projects\Project_Lockdown\Project_Lockdown.uproject&quot;" />
       <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="D:\Games\Epic\UE_5.3" />
+      <option name="WORKING_DIRECTORY" value="D:\UnrealEngineSourceBuild\UE_5.3.2" />
       <option name="PASS_PARENT_ENVS" value="1" />
       <option name="USE_EXTERNAL_CONSOLE" value="0" />
       <option name="TERMINAL_INTERACTION_BEHAVIOR" value="FORCE_CONSOLE" />
@@ -47,7 +47,7 @@
       <option name="EXECUTABLE_PATH" value="E:\Projects\Project_Lockdown\Binaries\Win64\Project_Lockdown.exe" />
       <option name="MANDATORY_PROGRAM_PARAMETERS" value="" />
       <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="D:\Games\Epic\UE_5.3" />
+      <option name="WORKING_DIRECTORY" value="D:\UnrealEngineSourceBuild\UE_5.3.2" />
       <option name="PASS_PARENT_ENVS" value="1" />
       <option name="USE_EXTERNAL_CONSOLE" value="0" />
       <option name="TERMINAL_INTERACTION_BEHAVIOR" value="FORCE_CONSOLE" />
@@ -60,7 +60,7 @@
       <option name="EXECUTABLE_PATH" value="E:\Projects\Project_Lockdown\Binaries\Win64\Project_Lockdown-Win64-Shipping.exe" />
       <option name="MANDATORY_PROGRAM_PARAMETERS" value="" />
       <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="D:\Games\Epic\UE_5.3" />
+      <option name="WORKING_DIRECTORY" value="D:\UnrealEngineSourceBuild\UE_5.3.2" />
       <option name="PASS_PARENT_ENVS" value="1" />
       <option name="USE_EXTERNAL_CONSOLE" value="0" />
       <option name="TERMINAL_INTERACTION_BEHAVIOR" value="FORCE_CONSOLE" />
@@ -73,7 +73,7 @@
       <option name="EXECUTABLE_PATH" value="E:\Projects\Project_Lockdown\Binaries\Win64\Project_LockdownServer-Win64-DebugGame.exe" />
       <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;E:\Projects\Project_Lockdown\Project_Lockdown.uproject&quot;" />
       <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="D:\Games\Epic\UE_5.3" />
+      <option name="WORKING_DIRECTORY" value="D:\UnrealEngineSourceBuild\UE_5.3.2" />
       <option name="PASS_PARENT_ENVS" value="1" />
       <option name="USE_EXTERNAL_CONSOLE" value="0" />
       <option name="TERMINAL_INTERACTION_BEHAVIOR" value="FORCE_CONSOLE" />
@@ -86,7 +86,7 @@
       <option name="EXECUTABLE_PATH" value="E:\Projects\Project_Lockdown\Binaries\Win64\Project_LockdownServer.exe" />
       <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;E:\Projects\Project_Lockdown\Project_Lockdown.uproject&quot;" />
       <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="D:\Games\Epic\UE_5.3" />
+      <option name="WORKING_DIRECTORY" value="D:\UnrealEngineSourceBuild\UE_5.3.2" />
       <option name="PASS_PARENT_ENVS" value="1" />
       <option name="USE_EXTERNAL_CONSOLE" value="0" />
       <option name="TERMINAL_INTERACTION_BEHAVIOR" value="FORCE_CONSOLE" />
@@ -99,11 +99,141 @@
       <option name="EXECUTABLE_PATH" value="E:\Projects\Project_Lockdown\Binaries\Win64\Project_LockdownServer-Win64-Shipping.exe" />
       <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;E:\Projects\Project_Lockdown\Project_Lockdown.uproject&quot;" />
       <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="D:\Games\Epic\UE_5.3" />
+      <option name="WORKING_DIRECTORY" value="D:\UnrealEngineSourceBuild\UE_5.3.2" />
       <option name="PASS_PARENT_ENVS" value="1" />
       <option name="USE_EXTERNAL_CONSOLE" value="0" />
       <option name="TERMINAL_INTERACTION_BEHAVIOR" value="FORCE_CONSOLE" />
     </configuration_8>
+    <configuration_9>
+      <option name="CONFIGURATION" value="Debug Client" />
+      <option name="PLATFORM" value="Win64" />
+      <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Project_Lockdown.uproject" />
+      <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
+      <option name="EXECUTABLE_PATH" value="E:\Projects\Project_Lockdown\Binaries\Win64\Project_LockdownClient-Win64-Debug.exe" />
+      <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;E:\Projects\Project_Lockdown\Project_Lockdown.uproject&quot;" />
+      <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="D:\UnrealEngineSourceBuild\UE_5.3.2" />
+      <option name="PASS_PARENT_ENVS" value="1" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <option name="TERMINAL_INTERACTION_BEHAVIOR" value="FORCE_CONSOLE" />
+    </configuration_9>
+    <configuration_10>
+      <option name="CONFIGURATION" value="Debug Editor" />
+      <option name="PLATFORM" value="Win64" />
+      <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Project_Lockdown.uproject" />
+      <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
+      <option name="EXECUTABLE_PATH" value="D:\UnrealEngineSourceBuild\UE_5.3.2\Engine\Binaries\Win64\UnrealEditor-Win64-Debug.exe" />
+      <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;E:\Projects\Project_Lockdown\Project_Lockdown.uproject&quot;" />
+      <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="D:\UnrealEngineSourceBuild\UE_5.3.2" />
+      <option name="PASS_PARENT_ENVS" value="1" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <option name="TERMINAL_INTERACTION_BEHAVIOR" value="FORCE_CONSOLE" />
+    </configuration_10>
+    <configuration_11>
+      <option name="CONFIGURATION" value="Debug Server" />
+      <option name="PLATFORM" value="Win64" />
+      <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Project_Lockdown.uproject" />
+      <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
+      <option name="EXECUTABLE_PATH" value="E:\Projects\Project_Lockdown\Binaries\Win64\Project_LockdownServer-Win64-Debug.exe" />
+      <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;E:\Projects\Project_Lockdown\Project_Lockdown.uproject&quot;" />
+      <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="D:\UnrealEngineSourceBuild\UE_5.3.2" />
+      <option name="PASS_PARENT_ENVS" value="1" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <option name="TERMINAL_INTERACTION_BEHAVIOR" value="FORCE_CONSOLE" />
+    </configuration_11>
+    <configuration_12>
+      <option name="CONFIGURATION" value="DebugGame Client" />
+      <option name="PLATFORM" value="Win64" />
+      <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Project_Lockdown.uproject" />
+      <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
+      <option name="EXECUTABLE_PATH" value="E:\Projects\Project_Lockdown\Binaries\Win64\Project_LockdownClient-Win64-DebugGame.exe" />
+      <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;E:\Projects\Project_Lockdown\Project_Lockdown.uproject&quot;" />
+      <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="D:\UnrealEngineSourceBuild\UE_5.3.2" />
+      <option name="PASS_PARENT_ENVS" value="1" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <option name="TERMINAL_INTERACTION_BEHAVIOR" value="FORCE_CONSOLE" />
+    </configuration_12>
+    <configuration_13>
+      <option name="CONFIGURATION" value="Debug" />
+      <option name="PLATFORM" value="Win64" />
+      <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Project_Lockdown.uproject" />
+      <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
+      <option name="EXECUTABLE_PATH" value="E:\Projects\Project_Lockdown\Binaries\Win64\Project_Lockdown-Win64-Debug.exe" />
+      <option name="MANDATORY_PROGRAM_PARAMETERS" value="" />
+      <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="D:\UnrealEngineSourceBuild\UE_5.3.2" />
+      <option name="PASS_PARENT_ENVS" value="1" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <option name="TERMINAL_INTERACTION_BEHAVIOR" value="FORCE_CONSOLE" />
+    </configuration_13>
+    <configuration_14>
+      <option name="CONFIGURATION" value="Development Client" />
+      <option name="PLATFORM" value="Win64" />
+      <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Project_Lockdown.uproject" />
+      <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
+      <option name="EXECUTABLE_PATH" value="E:\Projects\Project_Lockdown\Binaries\Win64\Project_LockdownClient.exe" />
+      <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;E:\Projects\Project_Lockdown\Project_Lockdown.uproject&quot;" />
+      <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="D:\UnrealEngineSourceBuild\UE_5.3.2" />
+      <option name="PASS_PARENT_ENVS" value="1" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <option name="TERMINAL_INTERACTION_BEHAVIOR" value="FORCE_CONSOLE" />
+    </configuration_14>
+    <configuration_15>
+      <option name="CONFIGURATION" value="Shipping Client" />
+      <option name="PLATFORM" value="Win64" />
+      <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Project_Lockdown.uproject" />
+      <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
+      <option name="EXECUTABLE_PATH" value="E:\Projects\Project_Lockdown\Binaries\Win64\Project_LockdownClient-Win64-Shipping.exe" />
+      <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;E:\Projects\Project_Lockdown\Project_Lockdown.uproject&quot;" />
+      <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="D:\UnrealEngineSourceBuild\UE_5.3.2" />
+      <option name="PASS_PARENT_ENVS" value="1" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <option name="TERMINAL_INTERACTION_BEHAVIOR" value="FORCE_CONSOLE" />
+    </configuration_15>
+    <configuration_16>
+      <option name="CONFIGURATION" value="Test Client" />
+      <option name="PLATFORM" value="Win64" />
+      <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Project_Lockdown.uproject" />
+      <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
+      <option name="EXECUTABLE_PATH" value="E:\Projects\Project_Lockdown\Binaries\Win64\Project_LockdownClient-Win64-Test.exe" />
+      <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;E:\Projects\Project_Lockdown\Project_Lockdown.uproject&quot;" />
+      <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="D:\UnrealEngineSourceBuild\UE_5.3.2" />
+      <option name="PASS_PARENT_ENVS" value="1" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <option name="TERMINAL_INTERACTION_BEHAVIOR" value="FORCE_CONSOLE" />
+    </configuration_16>
+    <configuration_17>
+      <option name="CONFIGURATION" value="Test Server" />
+      <option name="PLATFORM" value="Win64" />
+      <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Project_Lockdown.uproject" />
+      <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
+      <option name="EXECUTABLE_PATH" value="E:\Projects\Project_Lockdown\Binaries\Win64\Project_LockdownServer-Win64-Test.exe" />
+      <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;E:\Projects\Project_Lockdown\Project_Lockdown.uproject&quot;" />
+      <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="D:\UnrealEngineSourceBuild\UE_5.3.2" />
+      <option name="PASS_PARENT_ENVS" value="1" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <option name="TERMINAL_INTERACTION_BEHAVIOR" value="FORCE_CONSOLE" />
+    </configuration_17>
+    <configuration_18>
+      <option name="CONFIGURATION" value="Test" />
+      <option name="PLATFORM" value="Win64" />
+      <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Project_Lockdown.uproject" />
+      <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
+      <option name="EXECUTABLE_PATH" value="E:\Projects\Project_Lockdown\Binaries\Win64\Project_Lockdown-Win64-Test.exe" />
+      <option name="MANDATORY_PROGRAM_PARAMETERS" value="" />
+      <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="D:\UnrealEngineSourceBuild\UE_5.3.2" />
+      <option name="PASS_PARENT_ENVS" value="1" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <option name="TERMINAL_INTERACTION_BEHAVIOR" value="FORCE_CONSOLE" />
+    </configuration_18>
     <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Project_Lockdown.uproject" />
     <option name="AUTO_SELECT_PRIORITY" value="10010" />
     <method v="2">
