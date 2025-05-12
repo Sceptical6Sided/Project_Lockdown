@@ -3,3 +3,7 @@
 
 #include "Framework/CustomPlayerController.h"
 
+void ACustomPlayerController::ClientShowNotification_Implementation(const FText& Message)
+{
+	ShowNotification(Message);
+}
