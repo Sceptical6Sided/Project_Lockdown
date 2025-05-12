@@ -27,7 +27,7 @@ void ACustomGameModeBase::InitGameLift()
     //Define the server parameters for an Amazon GameLift Servers Anywhere fleet. These are not needed for an Amazon GameLift Servers managed EC2 fleet.
     FServerParameters serverParameters;
 
-    //AuthToken returned from the "aws gamelift get-compute-auth-token" API. Note this will expire and require a new call to the API after 15 minutes.
+    //AuthToken returned from the "aws GameLift get-compute-auth-token" API. Note this will expire and require a new call to the API after 15 minutes.
     if (FParse::Value(FCommandLine::Get(), TEXT("-authtoken="), serverParameters.m_authToken))
     {
         UE_LOG(GameServerLog, Log, TEXT("AUTH_TOKEN: %s"), *serverParameters.m_authToken)
